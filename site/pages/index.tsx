@@ -1,9 +1,14 @@
 import commerce from '@lib/api/commerce'
 import { Layout } from '@components/common'
 import { ProductCard } from '@components/product'
-import { Grid, Marquee, Hero } from '@components/ui'
+import { Grid, Marquee /* , Hero  */ } from '@components/ui'
+import Hero from '@components/common/Hero'
 // import HomeAllProductsGrid from '@components/common/HomeAllProductsGrid'
 import type { GetStaticPropsContext, InferGetStaticPropsType } from 'next'
+import BestSellers from '@components/common/BestSellers'
+import ShopByCategory from '@components/common/ShopByCategory'
+import Marketing from '@components/common/Marketing'
+import OurMind from '@components/common/OurMind'
 
 export async function getStaticProps({
   preview,
@@ -24,12 +29,14 @@ export async function getStaticProps({
   const { pages } = await pagesPromise
   const { categories, brands } = await siteInfoPromise
 
+  const newArrival = categories.find((category) => category.id == '24')
   return {
     props: {
       products,
       categories,
       brands,
       pages,
+      newArrival,
     },
     revalidate: 60,
   }
@@ -37,10 +44,26 @@ export async function getStaticProps({
 
 export default function Home({
   products,
+  categories,
+  pages,
+  newArrival,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
+  console.log(products)
+  console.log(categories)
+  console.log(pages)
+  console.log(newArrival)
+  // Gets 4 first products in list. Will be replaced by products from Clerk?
+  const trendingProducts = products.slice(0, 4).map((product) => product)
+  console.log(trendingProducts)
+  const marketingProducts = products.slice(4, 6).map((product) => product)
   return (
     <>
-      <Grid variant="filled">
+      <Hero />
+      <BestSellers products={trendingProducts} />
+      <ShopByCategory />
+      <Marketing products={marketingProducts} />
+      <OurMind />
+      {/* <Grid variant="filled">
         {products.slice(0, 3).map((product: any, i: number) => (
           <ProductCard
             key={product.id}
@@ -80,7 +103,7 @@ export default function Home({
         {products.slice(3).map((product: any, i: number) => (
           <ProductCard key={product.id} product={product} variant="slim" />
         ))}
-      </Marquee>
+      </Marquee> */}
       {/* <HomeAllProductsGrid
         newestProducts={products}
         categories={categories}

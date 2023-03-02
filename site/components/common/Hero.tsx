@@ -1,0 +1,36 @@
+import Link from 'next/link'
+import { FC } from 'react'
+
+const Hero: FC = () => {
+  return (
+    <div
+      className="relative bg-gray-800 py-32 px-6 sm:py-40 sm:px-12 lg:px-16"
+      style={{ height: 630 }}
+    >
+      <div className="absolute inset-0 overflow-hidden">
+        <img
+          src="https://stadium.se/INTERSHOP/static/WFS/Stadium-SwedenB2C-Site/-/Stadium/sv_SE/stadium%20b2c/campaigns/homepage/2023/v.9/220302_RUN_full-width-desktop.jpg"
+          alt=""
+          className="h-full w-full object-cover object-center"
+        />
+      </div>
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-gray-900 bg-opacity-50"
+      />
+      <div className="relative mx-auto flex max-w-3xl flex-col items-center text-center">
+        <h2 className="text-5xl tracking-tight text-white sm:text-5xl">
+          NEW IN
+        </h2>
+        <p className="mt-3 text-6xl text-white">Lorem ipsum & Lorem ipsum</p>
+        <Link href="/search/new-arrivals">
+          <div className="mt-8 block w-full rounded-2xl border border-transparent bg-white py-3 px-8 text-base font-medium text-gray-900 hover:bg-gray-100 sm:w-auto">
+            SHOP NOW
+          </div>
+        </Link>
+      </div>
+    </div>
+  )
+}
+
+export default Hero

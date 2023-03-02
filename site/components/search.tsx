@@ -32,7 +32,7 @@ import ErrorMessage from './ui/ErrorMessage'
 export default function Search({ categories, brands }: SearchPropsType) {
   const [activeFilter, setActiveFilter] = useState('')
   const [toggleFilter, setToggleFilter] = useState(false)
-
+  console.log(categories)
   const router = useRouter()
   const { asPath, locale } = router
   const { q, sort } = router.query

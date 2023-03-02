@@ -14,6 +14,8 @@ interface NavbarProps {
   links?: Link[]
 }
 
+// FIXA DENNA. ÄR INTE GJORD: GÖR CARTEN FÖRST
+
 const Navbar: FC<NavbarProps> = ({ links }) => {
   console.log(links)
   return (
