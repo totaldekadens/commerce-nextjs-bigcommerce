@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from 'react'
 import { ProductOptions } from '@components/product'
 import type { Product } from '@commerce/types/product'
 import { Button, Text, Rating, Collapse, useUI } from '@components/ui'
-import { IconStarFilled } from '@tabler/icons-react'
+
 import {
   getProductVariant,
   selectDefaultOptionFromProduct,
@@ -15,6 +15,7 @@ import {
   CurrencyDollarIcon,
   GlobeAmericasIcon,
 } from '@heroicons/react/24/outline'
+import { IconStarFilled } from '@tabler/icons-react'
 
 interface ProductSidebarProps {
   product: Product
