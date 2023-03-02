@@ -18,7 +18,7 @@ import { MenuSidebarView } from '@components/common/UserNav'
 import type { Page } from '@commerce/types/page'
 import type { Category } from '@commerce/types/site'
 import type { Link as LinkProps } from '../UserNav/MenuSidebarView'
-
+import NavbarCopy from '../Navbar/Navbar_copy'
 const Loading = () => (
   <div className="w-80 h-80 flex items-center text-center justify-center p-3">
     <LoadingDots />
@@ -118,7 +118,8 @@ const Layout: React.FC<Props> = ({
   return (
     <CommerceProvider locale={locale}>
       <div className={cn(s.root)}>
-        <Navbar links={navBarlinks} />
+        {/*  <Navbar links={navBarlinks} /> */}
+        <NavbarCopy links={navBarlinks} />
         <main className="fit">{children}</main>
         {/* <Footer pages={pageProps.pages} /> */}
         <FooterCopy pages={pageProps.pages} />
