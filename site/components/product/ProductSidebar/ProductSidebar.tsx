@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from 'react'
 import { ProductOptions } from '@components/product'
 import type { Product } from '@commerce/types/product'
 import { Button, Text, Rating, Collapse, useUI } from '@components/ui'
-import { StarIcon } from '@heroicons/react/20/solid'
+import { IconStarFilled } from '@tabler/icons-react'
 import {
   getProductVariant,
   selectDefaultOptionFromProduct,
@@ -90,7 +90,7 @@ const ProductSidebar: FC<ProductSidebarProps> = ({ product, className }) => {
           </p>
           <div className="ml-1 flex items-center">
             {[0, 1, 2, 3, 4].map((rating) => (
-              <StarIcon
+              <IconStarFilled
                 key={rating}
                 className={classNames(
                   /* product.rating  */ 4 > rating
