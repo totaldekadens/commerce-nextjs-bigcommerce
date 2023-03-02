@@ -30,17 +30,6 @@ export const getProductQuery = /* GraphQL */ `
                     altText
                     isDefault
                   }
-                  categories {
-                    edges {
-                      node {
-                        name
-                        path
-                        id
-                        entityId
-                        description
-                      }
-                    }
-                  }
                   prices {
                     ...productPrices
                   }
