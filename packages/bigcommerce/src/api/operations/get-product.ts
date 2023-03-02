@@ -30,6 +30,17 @@ export const getProductQuery = /* GraphQL */ `
                     altText
                     isDefault
                   }
+                  categories {
+                    edges {
+                      node {
+                        name
+                        path
+                        id
+                        entityId
+                        description
+                      }
+                    }
+                  }
                   prices {
                     ...productPrices
                   }
@@ -109,7 +120,7 @@ export default function getAllProductPathsOperation({
       if (locale && config.applyLocale) {
         setProductLocaleMeta(product)
       }
-
+      console.log(data)
       return { product: normalizeProduct(product as any) }
     }
 

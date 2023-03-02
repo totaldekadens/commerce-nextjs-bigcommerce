@@ -59,7 +59,7 @@ export default function OurMind({}) {
             >
               {categories.map((category: any) => (
                 <li
-                  key={category.id}
+                  key={category.title}
                   className="inline-flex w-64 flex-col text-center lg:w-auto"
                 >
                   <div className="group relative">

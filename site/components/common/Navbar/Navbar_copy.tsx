@@ -20,6 +20,7 @@ import { hideContext } from '../../context/HideProvider'
 import useWindowSize from '../../../lib/hooks/useWindowSize'
 import Cart from '../Cart'
 import { navigation } from '@lib/data/navigation'
+import UserNavCopy from '../UserNav/UserNav_Copy'
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
 }
@@ -495,7 +496,18 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
 
                     {/* Search */}
                     <div className="flex lg:ml-6">
-                      <a
+                      {process.env.COMMERCE_SEARCH_ENABLED && (
+                        <div className="justify-center flex-1 hidden lg:flex">
+                          <Searchbar />
+                        </div>
+                      )}
+
+                      {/*  {process.env.COMMERCE_SEARCH_ENABLED && (
+                        <div className="flex pb-4 lg:px-6 lg:hidden">
+                          <Searchbar id="mobile-search" />
+                        </div>
+                      )} */}
+                      {/* <a
                         href="#"
                         className="p-2 text-gray-400 hover:text-gray-500"
                       >
@@ -504,12 +516,12 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                           className="h-6 w-6"
                           aria-hidden="true"
                         />
-                      </a>
+                      </a> */}
                     </div>
 
                     {/* Cart */}
                     <div className="ml-4 flow-root lg:ml-6">
-                      <div
+                      {/* <div
                         className="group -m-2 flex items-center p-2"
                         style={{ cursor: 'pointer' }}
                         onClick={() => setOpenCart(true)}
@@ -522,7 +534,8 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                           0
                         </span>
                         <span className="sr-only">items in cart, view bag</span>
-                      </div>
+                      </div> */}
+                      <UserNavCopy />
                     </div>
                   </div>
                 </div>
