@@ -30,6 +30,7 @@
   width: 100%;
   height: 100%;
   @apply bg-violet-dark;
+  @apply bg-white;
   box-sizing: content-box;
   overflow-y: hidden;
   overflow-x: auto;

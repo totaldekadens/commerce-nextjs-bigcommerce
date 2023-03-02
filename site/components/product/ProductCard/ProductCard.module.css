@@ -19,7 +19,7 @@
   &:nth-child(6n + 1) .header .name span,
   &:nth-child(6n + 1) .header .price,
   &:nth-child(6n + 1) .wishlistButton {
-    @apply bg-violet text-white;
+    @apply bg-white text-black;
   }
 
   &:nth-child(6n + 5) .header .name span,
