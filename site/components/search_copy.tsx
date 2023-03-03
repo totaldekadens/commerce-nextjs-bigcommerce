@@ -451,13 +451,42 @@ export default function SearchCopy({ categories, brands }: SearchPropsType) {
                           className="h-full w-full object-cover object-center"
                         />
                       </div>
-                      <h3 className="mt-4 font-medium text-gray-900">
+                      <ul
+                        role="list"
+                        className="mt-auto flex items-center space-x-3 pt-4 pl-2"
+                      >
+                        {product.options
+                          ? product.options.map((option: any) => {
+                              if (option.displayName == 'Color') {
+                                return option.values.map(
+                                  (value: any, i: number) => {
+                                    return (
+                                      <li
+                                        key={i}
+                                        className="h-4 w-4 rounded-full border border-black border-opacity-10"
+                                        style={{
+                                          backgroundColor: value.hexColors[0],
+                                        }}
+                                      >
+                                        <span className="sr-only">
+                                          {' '}
+                                          {value.hexColors[0]}{' '}
+                                        </span>
+                                      </li>
+                                    )
+                                  }
+                                )
+                              }
+                            })
+                          : null}
+                      </ul>
+                      <h3 className="mt-4 font-medium text-gray-900  pl-2">
                         {product.name}
                       </h3>
-                      <p className="italic text-gray-500">
+                      <p className="italic text-gray-500  pl-2">
                         {/* {product.availability} */}
                       </p>
-                      <p className="mt-2 font-medium text-gray-900">
+                      <p className="mt-2 font-medium text-gray-900  pl-2">
                         {product.price.value + ' ' + product.price.currencyCode}
                       </p>
                       {/*  </a> */}
