@@ -29,14 +29,14 @@ export async function getStaticProps({
   const { pages } = await pagesPromise
   const { categories, brands } = await siteInfoPromise
 
-  const newArrival = categories.find((category) => category.id == '24')
+  //const newArrival = categories.find((category) => category.id == '24')
   return {
     props: {
       products,
       categories,
       brands,
       pages,
-      newArrival,
+      //newArrival,
     },
     revalidate: 60,
   }
@@ -46,12 +46,12 @@ export default function Home({
   products,
   categories,
   pages,
-  newArrival,
-}: InferGetStaticPropsType<typeof getStaticProps>) {
+}: //newArrival,
+InferGetStaticPropsType<typeof getStaticProps>) {
   console.log(products)
   console.log(categories)
   console.log(pages)
-  console.log(newArrival)
+  //console.log(newArrival)
   // Gets 4 first products in list. Will be replaced by products from Clerk?
   const trendingProducts = products.slice(0, 4).map((product) => product)
   console.log(trendingProducts)

@@ -11,18 +11,26 @@ import { SEO } from '@components/common'
 import ProductSidebar from '../ProductSidebar'
 import ProductTag from '../ProductTag'
 import FurtherInfoProduct from '@components/common/FurtherInfoProduct'
+import { Category } from '@commerce/types/site'
+
 interface ProductViewProps {
   product: Product
   relatedProducts: Product[]
+  categories: any
 }
 
-const ProductView: FC<ProductViewProps> = ({ product, relatedProducts }) => {
+const ProductViewCopy: FC<ProductViewProps> = ({
+  product,
+  relatedProducts,
+  categories,
+}) => {
   const { price } = usePrice({
     amount: product.price.value,
     baseAmount: product.price.retailPrice,
     currencyCode: product.price.currencyCode!,
   })
   console.log(product)
+  console.log(categories)
   return (
     <>
       <Container className="max-w-none w-full " clean>
@@ -157,4 +165,4 @@ const ProductView: FC<ProductViewProps> = ({ product, relatedProducts }) => {
   )
 }
 
-export default ProductView
+export default ProductViewCopy

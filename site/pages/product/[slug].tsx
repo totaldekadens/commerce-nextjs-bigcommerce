@@ -72,6 +72,7 @@ export async function getStaticPaths({ locales }: GetStaticPathsContext) {
 export default function Slug({
   product,
   relatedProducts,
+  categories,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter()
   console.log(product)
@@ -80,7 +81,11 @@ export default function Slug({
   ) : (
     <>
       {/* <ProductView product={product} relatedProducts={relatedProducts} /> */}
-      <ProductViewCopy product={product} relatedProducts={relatedProducts} />
+      <ProductViewCopy
+        product={product}
+        relatedProducts={relatedProducts}
+        categories={categories}
+      />
     </>
   )
 }
