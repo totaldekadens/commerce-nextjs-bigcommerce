@@ -44,7 +44,7 @@ export default function OurMind({}) {
   const categories = onOurMindList
   return (
     <div className="bg-white">
-      <div className="py-16 sm:py-24 lg:mx-auto lg:px-8">
+      <div className="py-16 sm:py-24 lg:mx-auto">
         <div className="flex items-center justify-center px-4 sm:px-6 lg:px-0">
           <h2 className="text-4xl font-bold tracking-tight text-gray-900">
             On Our Mind
@@ -63,7 +63,7 @@ export default function OurMind({}) {
                   className="inline-flex w-64 flex-col text-center lg:w-auto"
                 >
                   <div className="group relative">
-                    <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-md bg-gray-200">
+                    <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-200">
                       <img
                         src={category.imageSrc}
                         alt={category.imageAlt}

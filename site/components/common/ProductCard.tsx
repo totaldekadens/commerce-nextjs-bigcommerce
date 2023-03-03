@@ -6,15 +6,13 @@ interface Props {
 }
 
 export function ProductCard({ products, setOpenCart }: Props) {
+  console.log(products)
   return (
     <>
       {products.map((product: any) => (
-        <li
-          key={product.id}
-          className="inline-flex w-64 flex-col text-center lg:w-auto"
-        >
+        <li key={product.id} className="inline-flex w-64 flex-col lg:w-auto">
           <div className="group relative">
-            <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-md bg-gray-200">
+            <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-200">
               {product.images.map((image: any) => {
                 if (image.isDefault) {
                   return (
@@ -28,7 +26,35 @@ export function ProductCard({ products, setOpenCart }: Props) {
                 }
               })}
             </div>
-            <div className="mt-6">
+            <div className="mt-2 pl-2">
+              <h4 className="sr-only">Available colors</h4>
+              <ul
+                role="list"
+                className="mt-auto flex items-center space-x-3 pt-2 pb-1"
+              >
+                {product.options
+                  ? product.options.map((option: any) => {
+                      if (option.displayName == 'Color') {
+                        return option.values.map((value: any, i: number) => {
+                          return (
+                            <li
+                              key={i}
+                              className="h-4 w-4 rounded-full border border-black border-opacity-10"
+                              style={{
+                                backgroundColor: value.hexColors[0],
+                              }}
+                            >
+                              <span className="sr-only">
+                                {' '}
+                                {value.hexColors[0]}{' '}
+                              </span>
+                            </li>
+                          )
+                        })
+                      }
+                    })
+                  : null}
+              </ul>
               <p className="text-sm text-gray-500">{product.color}</p>
               <h3 className="mt-1 font-semibold text-gray-900">
                 <Link href={'/product/' + product.slug}>
@@ -50,24 +76,6 @@ export function ProductCard({ products, setOpenCart }: Props) {
               </p>
             </div>
           </div>
-
-          <h4 className="sr-only">Available colors</h4>
-          <ul
-            role="list"
-            className="mt-auto flex items-center justify-center space-x-3 pt-6"
-          >
-            {product.variants && product.colors
-              ? product.colors.map((color: any) => (
-                  <li
-                    key={color.name}
-                    className="h-4 w-4 rounded-full border border-black border-opacity-10"
-                    style={{ backgroundColor: color.bgColor }}
-                  >
-                    <span className="sr-only"> {color.name} </span>
-                  </li>
-                ))
-              : null}
-          </ul>
         </li>
       ))}
     </>
