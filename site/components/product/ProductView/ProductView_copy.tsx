@@ -26,13 +26,12 @@ const ProductView: FC<ProductViewProps> = ({ product, relatedProducts }) => {
   return (
     <>
       <Container className="max-w-none w-full " clean>
-        <div className="mx-auto max-w-2xl px-4 sm:px-6  lg:max-w-7xl lg:px-8">
-          <nav
-            aria-label="Breadcrumb"
-            className="mx-auto max-w-none mt-5 mb-5 px-4 sm:px-6 lg:px-8"
-          >
-            <ol role="list" className="flex items-center space-x-4">
-              {/*  {!product.breadcrumbs
+        <nav
+          aria-label="Breadcrumb"
+          className="mx-auto max-w-none mt-5 mb-5 px-4 sm:px-6 lg:px-8"
+        >
+          <ol role="list" className="flex items-center space-x-4">
+            {/*  {!product.breadcrumbs
               ? null
               : product.breadcrumbs.map((breadcrumb) => (
                   <li key={breadcrumb.id}>
@@ -56,19 +55,20 @@ const ProductView: FC<ProductViewProps> = ({ product, relatedProducts }) => {
                     </div>
                   </li>
                 ))} */}
-              <li className="text-sm">
-                {!product.slug ? null : (
-                  <a
-                    href={'/product' + product.path}
-                    aria-current="page"
-                    className="font-medium text-gray-500 hover:text-gray-600"
-                  >
-                    {'/ ' + product.name}
-                  </a>
-                )}
-              </li>
-            </ol>
-          </nav>
+            <li className="text-sm">
+              {!product.slug ? null : (
+                <a
+                  href={'/product' + product.path}
+                  aria-current="page"
+                  className="font-medium text-gray-500 hover:text-gray-600"
+                >
+                  {'/ ' + product.name}
+                </a>
+              )}
+            </li>
+          </ol>
+        </nav>
+        <div className="mx-auto max-w-2xl px-4 sm:px-6  lg:max-w-7xl lg:px-8">
           <div className={cn(s.root, 'fit')}>
             <div className={cn(s.main, 'fit')}>
               {/* <ProductTag

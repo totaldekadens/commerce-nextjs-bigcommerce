@@ -260,8 +260,8 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
               aria-label="Top"
               className={
                 hide
-                  ? 'transition-all duration-300 ease-in-out mx-auto z-50 max-w-7xl px-4 py-0 sm:px-6 lg:px-8'
-                  : 'transition-all duration-300 ease-in-out mx-auto z-50 max-w-7xl px-4 py-0 sm:px-6 lg:px-8 lg:py-3'
+                  ? 'transition-all duration-300 ease-in-out mx-auto z-50 px-4 py-0 sm:px-6 lg:px-8'
+                  : 'transition-all duration-300 ease-in-out mx-auto z-50 px-4 py-0 sm:px-6 lg:px-8 lg:py-3'
               }
               style={{
                 transition: 'height 2.5',
