@@ -29,6 +29,7 @@ export async function getStaticProps({
   const { pages } = await pagesPromise
   const { categories, brands } = await siteInfoPromise
 
+  // Fix newarrival later
   //const newArrival = categories.find((category) => category.id == '24')
   return {
     props: {
