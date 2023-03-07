@@ -384,7 +384,7 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                                                         </div>
                                                         <Link
                                                           href={
-                                                            '/categories/' +
+                                                            '/search/' +
                                                             getSlug(item.path)
                                                           }
                                                         >

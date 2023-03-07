@@ -73,7 +73,7 @@ export default function Home({
       <BestSellers products={trendingProducts} />
       <ShopByCategory />
       <Marketing products={marketingProducts} />
-      <OurMind />
+      {/* <OurMind /> */}
       {/* <Grid variant="filled">
         {products.slice(0, 3).map((product: any, i: number) => (
           <ProductCard

@@ -29,20 +29,20 @@ export default function ShopByCategory() {
             <div className="flex items-end p-6">
               <div>
                 <h3 className="font-semibold text-white">
-                  <Link href="/search/jackets">
+                  <Link href="/search/fritid/fritidsklader-och-utrustning/friluftsklader/fleecejackor">
                     <span className="absolute inset-0" />
-                    Jackets
+                    Jackor
                   </Link>
                 </h3>
                 <p aria-hidden="true" className="mt-1 text-sm text-white">
-                  Shop now
+                  Shoppa nu
                 </p>
               </div>
             </div>
           </div>
           <div className="group aspect-w-2 aspect-h-1 overflow-hidden sm:aspect-none sm:relative sm:h-full">
             <img
-              src="https://tailwindui.com/img/ecommerce-images/home-page-03-category-01.jpg"
+              src="https://graningeshoes.com/wp-content/uploads/graninge-bred-01.jpg"
               alt="Wooden shelf with gray and olive drab green baseball caps, next to wooden clothes hanger with sweaters."
               className="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
             />
@@ -53,20 +53,20 @@ export default function ShopByCategory() {
             <div className="flex items-end p-6 sm:absolute sm:inset-0">
               <div>
                 <h3 className="font-semibold text-white">
-                  <Link href="/search/sweatshirts">
+                  <Link href="/search/fritid/fritidsskor/friluftskangor-vandringskangor">
                     <span className="absolute inset-0" />
-                    Sweatshirts
+                    Kängor
                   </Link>
                 </h3>
                 <p aria-hidden="true" className="mt-1 text-sm text-white">
-                  Shop now
+                  Som passar alla väder
                 </p>
               </div>
             </div>
           </div>
           <div className="group aspect-w-2 aspect-h-1 overflow-hidden sm:aspect-none sm:relative sm:h-full">
             <img
-              src="https://tailwindui.com/img/ecommerce-images/home-page-03-category-02.jpg"
+              src="https://skogmarks.b-cdn.net/16640-medium_default/garphyttan-specialist-gaiter-trouser-green-w.jpg"
               alt="Walnut desk organizer set with white modular trays, next to porcelain mug on wooden desk."
               className="object-cover object-center group-hover:opacity-75 sm:absolute sm:inset-0 sm:h-full sm:w-full"
             />
@@ -77,13 +77,13 @@ export default function ShopByCategory() {
             <div className="flex items-end p-6 sm:absolute sm:inset-0">
               <div>
                 <h3 className="font-semibold text-white">
-                  <Link href="/search/pants">
+                  <Link href="/search/fritid/fritidsklader-och-utrustning/friluftsklader/fritidsbyxor-friluftsbyxor">
                     <span className="absolute inset-0" />
-                    Pants
+                    Byxor
                   </Link>
                 </h3>
                 <p aria-hidden="true" className="mt-1 text-sm text-white">
-                  Shop now
+                  För ett aktiv friluftsliv
                 </p>
               </div>
             </div>
