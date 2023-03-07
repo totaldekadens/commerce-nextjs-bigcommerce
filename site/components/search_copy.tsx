@@ -39,6 +39,11 @@ import {
   Squares2X2Icon,
 } from '@heroicons/react/20/solid'
 import Image from 'next/image'
+import getSlug from '@lib/get-slug'
+import {
+  getActiveCategory,
+  getActiveCategoryTree,
+} from '@lib/hooks/useCategoryHooks'
 
 const sortOptions = [
   { name: 'Most Popular', href: '#', current: true },
@@ -47,13 +52,7 @@ const sortOptions = [
   { name: 'Price: Low to High', href: '#', current: false },
   { name: 'Price: High to Low', href: '#', current: false },
 ]
-const subCategories = [
-  { name: 'Totes', href: '#' },
-  { name: 'Backpacks', href: '#' },
-  { name: 'Travel Bags', href: '#' },
-  { name: 'Hip Bags', href: '#' },
-  { name: 'Laptop Sleeves', href: '#' },
-]
+
 const filters = [
   {
     id: 'color',
@@ -91,37 +90,20 @@ const filters = [
     ],
   },
 ]
-const products = [
-  {
-    id: 1,
-    name: 'Nomad Pouch',
-    href: '#',
-    price: '$50',
-    availability: 'White and Black',
-    imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/category-page-07-product-01.jpg',
-    imageAlt:
-      'White fabric pouch with white zipper, black zipper pull, and black elastic loop.',
-  },
-  {
-    id: 2,
-    name: 'Zip Tote Basket',
-    href: '#',
-    price: '$140',
-    availability: 'Washed Black',
-    imageSrc:
-      'https://tailwindui.com/img/ecommerce-images/category-page-07-product-02.jpg',
-    imageAlt:
-      'Front of tote bag with washed black canvas body, black straps, and tan leather handles and accents.',
-  },
-  // More products...
-]
+
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function SearchCopy({ categories, brands }: SearchPropsType) {
+// Flytta denna till utils
+
+export default function SearchCopy({
+  categories,
+  brands,
+  categoryTree,
+}: SearchPropsType) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const [breadcrumbs, setBreadcrumbs] = useState([])
   const router = useRouter()
   const { asPath, locale } = router
   const { q, sort } = router.query
@@ -131,20 +113,52 @@ export default function SearchCopy({ categories, brands }: SearchPropsType) {
   const query = filterQuery({ sort })
 
   const { pathname, category, brand } = useSearchMeta(asPath)
+  let getLength = router.query.category?.length
 
-  const activeCategory = categories.find((cat: any) => cat.slug === category)
+  let activeCategorySlug = router.query.category
+    ? router.query.category[getLength ? getLength - 1 : 0]
+    : undefined
+
+  const activeCategory = getActiveCategory(categoryTree, activeCategorySlug)
+  const activeCategoryTree = getActiveCategoryTree(
+    categoryTree,
+    activeCategorySlug
+  )
+
   const activeBrand = brands.find((b: Brand) => b.slug === brand)
 
   const { data, error } = useSearch({
     search: typeof q === 'string' ? q : '',
-    categoryId: activeCategory?.id,
+    categoryId: activeCategory?.entityId,
     brandId: activeBrand?.id,
     sort: typeof sort === 'string' ? sort : '',
     locale,
   })
-  console.log(activeCategory)
-  console.log(categories)
-  console.log(data)
+
+  /* Breadbrumbs */
+
+  const splittedPaths = asPath.split('/')
+
+  const categoryObjectsFromPath = splittedPaths.map((path) => {
+    return getActiveCategoryTree(categoryTree, path)
+  })
+  // Filter out empty objects
+  const newArray = categoryObjectsFromPath.filter(
+    (value) => Object.keys(value).length !== 0
+  )
+
+  const list: any[] = []
+  newArray.forEach((category) => {
+    const foundIndex = splittedPaths.findIndex(
+      (path) => path == getSlug(category.path)
+    )
+    const newPaths = splittedPaths.slice(0, foundIndex + 1)
+    const copy = { ...category }
+    copy.path = newPaths.join('/')
+    category = copy
+    list.push(category)
+  })
+
   if (error) {
     return <ErrorMessage error={error} />
   }
@@ -289,11 +303,18 @@ export default function SearchCopy({ categories, brands }: SearchPropsType) {
         </Transition.Root>
 
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex items-baseline justify-between border-b border-gray-200 pt-24 pb-6">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900">
-              {activeCategory?.name}
-            </h1>
-
+          <div className="flex items-baseline justify-between border-b border-gray-200 pt-20 pb-6">
+            <div>
+              <Link href={'/'}>Hem </Link>
+              {list.map((path, i) => (
+                <Link key={i} href={path.path}>
+                  {' /  ' + path.name}
+                </Link>
+              ))}
+              <h1 className="text-4xl font-bold tracking-tight text-gray-900 pt-4">
+                {activeCategory?.name}
+              </h1>
+            </div>
             <div className="flex items-center">
               <Menu as="div" className="relative inline-block text-left">
                 <div>
@@ -371,13 +392,16 @@ export default function SearchCopy({ categories, brands }: SearchPropsType) {
                   role="list"
                   className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900"
                 >
-                  {categories.map((category) => (
-                    <li key={category.name}>
-                      <Link href={'/search/' + category.slug}>
-                        {category.name}
-                      </Link>
-                    </li>
-                  ))}
+                  {!activeCategoryTree.children ||
+                  activeCategoryTree.children.length < 1
+                    ? null
+                    : activeCategoryTree.children.map((category: any) => (
+                        <li key={category.name}>
+                          <Link href={asPath + '/' + getSlug(category.path)}>
+                            {category.name}
+                          </Link>
+                        </li>
+                      ))}
                 </ul>
 
                 {filters.map((section) => (

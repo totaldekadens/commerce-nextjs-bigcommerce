@@ -9,6 +9,9 @@ import BestSellers from '@components/common/BestSellers'
 import ShopByCategory from '@components/common/ShopByCategory'
 import Marketing from '@components/common/Marketing'
 import OurMind from '@components/common/OurMind'
+import jagarlivApolloClient from '@lib/apollo/apollo'
+import { getCategoryTreeQuery } from '@lib/queries'
+import { normalizeCategoryTree } from '@lib/normalize'
 
 export async function getStaticProps({
   preview,
@@ -23,40 +26,47 @@ export async function getStaticProps({
     // Saleor provider only
     ...({ featured: true } as any),
   })
+  //console.log(preview)
   const pagesPromise = commerce.getAllPages({ config, preview })
   const siteInfoPromise = commerce.getSiteInfo({ config, preview })
   const { products } = await productsPromise
   const { pages } = await pagesPromise
-  const { categories, brands } = await siteInfoPromise
+  let { categories, brands } = await siteInfoPromise
 
-  // Fix newarrival later
-  //const newArrival = categories.find((category) => category.id == '24')
+  const { data } = await jagarlivApolloClient.query({
+    query: getCategoryTreeQuery,
+  })
+  const hej = normalizeCategoryTree(data.site.categoryTree)
+
   return {
     props: {
+      categoryTree: hej,
       products,
       categories,
       brands,
       pages,
-      //newArrival,
     },
     revalidate: 60,
   }
 }
 
 export default function Home({
+  categoryTree,
   products,
   categories,
   pages,
-}: //newArrival,
-InferGetStaticPropsType<typeof getStaticProps>) {
-  console.log(products)
-  console.log(categories)
-  console.log(pages)
-  //console.log(newArrival)
+  brands,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
+  //console.log('index')
+  //console.log(categoryTree)
+  //console.log(categories)
+  //console.log(categoryTree)
+
   // Gets 4 first products in list. Will be replaced by products from Clerk?
   const trendingProducts = products.slice(0, 4).map((product) => product)
-  console.log(trendingProducts)
+  //console.log(trendingProducts)
   const marketingProducts = products.slice(4, 6).map((product) => product)
+
   return (
     <>
       <Hero />

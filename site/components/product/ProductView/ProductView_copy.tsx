@@ -29,8 +29,8 @@ const ProductViewCopy: FC<ProductViewProps> = ({
     baseAmount: product.price.retailPrice,
     currencyCode: product.price.currencyCode!,
   })
-  console.log(product)
-  console.log(categories)
+  //console.log(product)
+  //console.log(categories)
   return (
     <>
       <Container className="max-w-none w-full " clean>

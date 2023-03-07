@@ -7,9 +7,13 @@ import type { GetSiteInfoQuery } from '../../../schema'
 import filterEdges from '../utils/filter-edges'
 import type { BigcommerceConfig, Provider } from '..'
 import { categoryTreeItemFragment } from '../fragments/category-tree'
-import { normalizeBrand, normalizeCategory } from '../../lib/normalize'
+import {
+  //noralizeCategoryTree,
+  normalizeBrand,
+  normalizeCategory,
+} from '../../lib/normalize'
 
-// Get 3 levels of categories
+// Get 5 levels of categories
 export const getSiteInfoQuery = /* GraphQL */ `
   query getSiteInfo {
     site {
@@ -19,6 +23,9 @@ export const getSiteInfoQuery = /* GraphQL */ `
           ...categoryTreeItem
           children {
             ...categoryTreeItem
+            children {
+              ...categoryTreeItem
+            }
           }
         }
       }
@@ -74,12 +81,15 @@ export default function getSiteInfoOperation({
   } = {}): Promise<T['data']> {
     const cfg = commerce.getConfig(config)
     const { data } = await cfg.fetch<GetSiteInfoQuery>(query)
-    const categories = data.site.categoryTree.map(normalizeCategory)
+    const categoryTree = data.site.categoryTree
+    const categories = null //data.site.categoryTree.map(normalizeCategory)
+    console.log(data)
     const brands = data.site?.brands?.edges
 
     return {
       categories: categories ?? [],
       brands: filterEdges(brands).map(normalizeBrand),
+      categoryTree: categoryTree,
     }
   }
 

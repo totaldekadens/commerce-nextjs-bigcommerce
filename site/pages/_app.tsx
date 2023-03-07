@@ -15,6 +15,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     document.body.classList?.remove('loading')
   }, [])
+  //console.log(Component)
+  //console.log(pageProps)
 
   return (
     <>

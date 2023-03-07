@@ -120,6 +120,18 @@ function normalizeLineItem(item: any): LineItem {
   }
 }
 
+export function normalizeCategoryTree(categories: any) {
+  let recursive: any[] = []
+  const flatCategoryTree = (object: any) => {
+    for (let i = 0; i < object.length; i++) {
+      // console.log(object)
+      if (object[i].children?.length > 0) flatCategoryTree(object[i].children)
+    }
+  }
+  flatCategoryTree(categories)
+  return recursive.map(normalizeCategory)
+}
+
 export function normalizeCategory(category: BCCategory): Category {
   return {
     id: `${category.entityId}`,

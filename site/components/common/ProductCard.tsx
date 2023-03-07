@@ -6,18 +6,18 @@ interface Props {
 }
 
 export function ProductCard({ products, setOpenCart }: Props) {
-  console.log(products)
+  //console.log(products)
   return (
     <>
       {products.map((product: any) => (
         <li key={product.id} className="inline-flex w-64 flex-col lg:w-auto">
           <div className="group relative">
             <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-200">
-              {product.images.map((image: any) => {
+              {product.images.map((image: any, i: number) => {
                 if (image.isDefault) {
                   return (
                     <img
-                      key={image.id}
+                      key={i}
                       src={image.url}
                       alt={image.alt}
                       className="h-full w-full object-cover object-center group-hover:opacity-75"
@@ -33,7 +33,7 @@ export function ProductCard({ products, setOpenCart }: Props) {
                 className="mt-auto flex items-center space-x-3 pt-2 pb-1"
               >
                 {product.options
-                  ? product.options.map((option: any) => {
+                  ? product.options.map((option: any, i: number) => {
                       if (option.displayName == 'Color') {
                         return option.values.map((value: any, i: number) => {
                           return (

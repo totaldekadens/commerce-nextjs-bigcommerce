@@ -1,17 +1,8 @@
 import { FC } from 'react'
-
-import s from './Navbar.module.css'
-import NavbarRoot from './NavbarRoot'
-import { Logo, Container } from '@components/ui'
 import { Searchbar, UserNav } from '@components/common'
 import { Fragment, useState } from 'react'
 import { Dialog, Popover, Tab, Transition } from '@headlessui/react'
-import {
-  Bars3Icon,
-  MagnifyingGlassIcon,
-  ShoppingBagIcon,
-  XMarkIcon,
-} from '@heroicons/react/24/outline'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 //import { navigation } from '../../utils/data/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -21,12 +12,19 @@ import useWindowSize from '../../../lib/hooks/useWindowSize'
 import Cart from '../Cart'
 import { navigation } from '@lib/data/navigation'
 import UserNavCopy from '../UserNav/UserNav_Copy'
+import getSlug from '@lib/get-slug'
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
 }
+
 interface Link {
-  href: string
-  label: string
+  entityId: number
+  name: string
+  path: string
+  __typename: string
+  children: Link[]
+  productCount: number
+  description?: string
 }
 
 interface NavbarProps {
@@ -40,14 +38,15 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
   const { width, height } = useWindowSize()
   const [openCart, setOpenCart] = useState(false)
 
-  //console.log("hideUSP: " + hideUSP + ", " + "hide: " + hide);
+  // Removes "Home"
+  links = links?.filter((link) => link.name != 'Home')
 
   useEffect(() => {
     if (scrollY < 41) {
       setUSPHeight(40 - scrollY)
     }
   }, [scrollY])
-  console.log(links)
+
   return (
     <>
       <p
@@ -105,21 +104,23 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                   <Tab.Group as="div" className="mt-2 z-100 ">
                     <div className="border-b border-gray-200">
                       <Tab.List className="-mb-px flex space-x-8 px-4">
-                        {navigation.categories.map((category) => (
-                          <Tab
-                            key={category.name}
-                            className={({ selected }) =>
-                              classNames(
-                                selected
-                                  ? 'text-indigo-600 border-indigo-600'
-                                  : 'text-gray-900 border-transparent',
-                                'flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-base font-medium'
-                              )
-                            }
-                          >
-                            {category.name}
-                          </Tab>
-                        ))}
+                        {!links
+                          ? null
+                          : links.map((category) => (
+                              <Tab
+                                key={category.name}
+                                className={({ selected }) =>
+                                  classNames(
+                                    selected
+                                      ? 'text-indigo-600 border-indigo-600'
+                                      : 'text-gray-900 border-transparent',
+                                    'flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-base font-medium'
+                                  )
+                                }
+                              >
+                                {category.name}
+                              </Tab>
+                            ))}
                       </Tab.List>
                     </div>
                     <Tab.Panels as={Fragment}>
@@ -319,135 +320,217 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                       id="ettidtest"
                       style={{ paddingBottom: 2, paddingTop: 2 }}
                     >
-                      {navigation.categories.map((category) => (
-                        <Popover key={category.name} className="flex">
-                          {({ open }) => (
-                            <>
-                              <div className="relative flex">
-                                <Popover.Button
-                                  className={classNames(
-                                    open
-                                      ? 'border-indigo-600 text-indigo-600'
-                                      : 'border-transparent text-gray-700 hover:text-gray-800',
-                                    'relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium transition-colors duration-200 ease-out'
-                                  )}
-                                >
-                                  {category.name}
-                                </Popover.Button>
-                              </div>
+                      {!links
+                        ? null
+                        : links.map((category) => (
+                            <Popover key={category.name} className="flex">
+                              {({ open }) => (
+                                <>
+                                  <div className="relative flex">
+                                    <Popover.Button
+                                      className={classNames(
+                                        open
+                                          ? 'border-indigo-600 text-indigo-600'
+                                          : 'border-transparent text-gray-700 hover:text-gray-800',
+                                        'relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium transition-colors duration-200 ease-out'
+                                      )}
+                                    >
+                                      {category.name}
+                                    </Popover.Button>
+                                  </div>
 
-                              <Transition
-                                as={Fragment}
-                                enter="transition ease-out duration-200"
-                                enterFrom="opacity-0"
-                                enterTo="opacity-100"
-                                leave="transition ease-in duration-150"
-                                leaveFrom="opacity-100"
-                                leaveTo="opacity-0"
-                              >
-                                <Popover.Panel className="absolute inset-x-0 top-full text-sm text-gray-500">
-                                  {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow */}
-                                  <div
-                                    className="absolute inset-0 top-1/2 bg-white shadow"
-                                    aria-hidden="true"
-                                  />
+                                  <Transition
+                                    as={Fragment}
+                                    enter="transition ease-out duration-200"
+                                    enterFrom="opacity-0"
+                                    enterTo="opacity-100"
+                                    leave="transition ease-in duration-150"
+                                    leaveFrom="opacity-100"
+                                    leaveTo="opacity-0"
+                                  >
+                                    <Popover.Panel className="absolute inset-x-0 top-full text-sm text-gray-500">
+                                      {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow */}
+                                      <div
+                                        className="absolute inset-0 top-1/2 bg-white shadow"
+                                        aria-hidden="true"
+                                      />
 
-                                  <div className="relative bg-white">
-                                    <div className="mx-auto max-w-7xl px-8">
-                                      <div className="grid grid-cols-2 gap-y-10 gap-x-8 py-16">
-                                        <div className="col-start-2 grid grid-cols-2 gap-x-8">
-                                          {category.featured.map((item) => (
-                                            <div
-                                              key={item.name}
-                                              className="group relative text-base sm:text-sm"
-                                              onClick={() => setOpen(false)}
-                                            >
-                                              <div className="aspect-w-1 aspect-h-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-                                                <img
-                                                  src={item.imageSrc}
-                                                  alt={item.imageAlt}
-                                                  className="object-cover object-center"
-                                                />
-                                              </div>
-                                              <Link
-                                                href={
-                                                  '/categories/' + item.href
-                                                }
-                                              >
-                                                <div
-                                                  className="mt-6 block font-medium text-gray-900"
-                                                  onClick={() => setOpen(false)}
-                                                >
-                                                  <span
-                                                    className="absolute inset-0 z-10"
-                                                    aria-hidden="true"
-                                                  />
-                                                  {item.name}
-                                                </div>
-                                              </Link>
-                                              <p
-                                                aria-hidden="true"
-                                                className="mt-1"
-                                              >
-                                                Shop now
-                                              </p>
-                                            </div>
-                                          ))}
-                                        </div>
-                                        <div className="row-start-1 grid grid-cols-3 gap-y-10 gap-x-8 text-sm">
-                                          {category.sections.map((section) => (
-                                            <div key={section.name}>
-                                              <p
-                                                id={`${section.name}-heading`}
-                                                className="font-medium text-gray-900"
-                                              >
-                                                {section.name}
-                                              </p>
-                                              <ul
-                                                role="list"
-                                                aria-labelledby={`${section.name}-heading`}
-                                                className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
-                                              >
-                                                {section.items.map((item) => (
-                                                  <li
-                                                    key={item.name}
-                                                    className="flex"
-                                                    onClick={() =>
-                                                      setOpen(false)
-                                                    }
-                                                  >
-                                                    <Link
-                                                      href={
-                                                        '/categories/' +
-                                                        item.href
-                                                      }
-                                                    >
+                                      <div className="relative bg-white">
+                                        <div className="mx-auto max-w-7xl px-8">
+                                          <div className="grid grid-cols-2 gap-y-10 gap-x-8 py-16">
+                                            <div className="col-start-2 grid grid-cols-2 gap-x-8">
+                                              {/* Featured */}
+                                              {!category.children
+                                                ? null
+                                                : category.children
+                                                    .slice(0, 2)
+                                                    .map((item) => (
                                                       <div
-                                                        className="hover:text-gray-800"
+                                                        key={item.name}
+                                                        className="group relative text-base sm:text-sm"
                                                         onClick={() =>
                                                           setOpen(false)
                                                         }
                                                       >
-                                                        {item.name}
+                                                        <div className="aspect-w-1 aspect-h-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+                                                          {/* placeholder atm */}
+                                                          <img
+                                                            src={
+                                                              'https://cdn.pixabay.com/photo/2016/11/22/19/25/man-1850181_960_720.jpg'
+                                                            }
+                                                            alt={'bild'}
+                                                            className="object-cover object-center"
+                                                          />
+                                                        </div>
+                                                        <Link
+                                                          href={
+                                                            '/categories/' +
+                                                            getSlug(item.path)
+                                                          }
+                                                        >
+                                                          <div
+                                                            className="mt-6 block font-medium text-gray-900"
+                                                            onClick={() =>
+                                                              setOpen(false)
+                                                            }
+                                                          >
+                                                            <span
+                                                              className="absolute inset-0 z-10"
+                                                              aria-hidden="true"
+                                                            />
+                                                            {item.name}
+                                                          </div>
+                                                        </Link>
+                                                        <p
+                                                          aria-hidden="true"
+                                                          className="mt-1"
+                                                        >
+                                                          Shop now
+                                                        </p>
                                                       </div>
-                                                    </Link>
-                                                  </li>
-                                                ))}
-                                              </ul>
+                                                    ))}
                                             </div>
-                                          ))}
+                                            <div className="row-start-1 grid grid-cols-3 gap-y-10 gap-x-8 text-sm">
+                                              {category.children.length < 1
+                                                ? null
+                                                : category.children.map(
+                                                    (section) =>
+                                                      section.children.length <
+                                                      1
+                                                        ? null
+                                                        : section.children.map(
+                                                            (section) => (
+                                                              <>
+                                                                {section
+                                                                  .children
+                                                                  .length <
+                                                                1 ? null : (
+                                                                  <>
+                                                                    <div
+                                                                      key={
+                                                                        section.name
+                                                                      }
+                                                                    >
+                                                                      <Link
+                                                                        href={
+                                                                          '/search/' +
+                                                                          getSlug(
+                                                                            category.path
+                                                                          ) +
+                                                                          '/' +
+                                                                          getSlug(
+                                                                            section.path
+                                                                          )
+                                                                        }
+                                                                      >
+                                                                        <p
+                                                                          id={`${section.name}-heading`}
+                                                                          className="font-medium text-gray-900"
+                                                                        >
+                                                                          {
+                                                                            section.name
+                                                                          }
+                                                                        </p>
+                                                                      </Link>
+                                                                      <ul
+                                                                        role="list"
+                                                                        aria-labelledby={`${section.name}-heading`}
+                                                                        className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
+                                                                      >
+                                                                        {section
+                                                                          .children
+                                                                          .length <
+                                                                          1 &&
+                                                                        section.productCount <
+                                                                          1
+                                                                          ? null
+                                                                          : section.children.map(
+                                                                              (
+                                                                                item
+                                                                              ) => (
+                                                                                <li
+                                                                                  key={
+                                                                                    item.name
+                                                                                  }
+                                                                                  className="flex"
+                                                                                  onClick={() =>
+                                                                                    setOpen(
+                                                                                      false
+                                                                                    )
+                                                                                  }
+                                                                                >
+                                                                                  <Link
+                                                                                    href={
+                                                                                      '/search/' +
+                                                                                      getSlug(
+                                                                                        category.path
+                                                                                      ) +
+                                                                                      '/' +
+                                                                                      getSlug(
+                                                                                        section.path
+                                                                                      ) +
+                                                                                      '/' +
+                                                                                      getSlug(
+                                                                                        item.path
+                                                                                      )
+                                                                                    }
+                                                                                  >
+                                                                                    <div
+                                                                                      className="hover:text-gray-800"
+                                                                                      onClick={() =>
+                                                                                        setOpen(
+                                                                                          false
+                                                                                        )
+                                                                                      }
+                                                                                    >
+                                                                                      {
+                                                                                        item.name
+                                                                                      }
+                                                                                    </div>
+                                                                                  </Link>
+                                                                                </li>
+                                                                              )
+                                                                            )}
+                                                                      </ul>
+                                                                    </div>
+                                                                  </>
+                                                                )}
+                                                              </>
+                                                            )
+                                                          )
+                                                  )}
+                                            </div>
+                                          </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  </div>
-                                </Popover.Panel>
-                              </Transition>
-                            </>
-                          )}
-                        </Popover>
-                      ))}
+                                    </Popover.Panel>
+                                  </Transition>
+                                </>
+                              )}
+                            </Popover>
+                          ))}
 
-                      {navigation.pages.map((page) => (
+                      {/*  {navigation.pages.map((page) => (
                         <a
                           key={page.name}
                           href={page.href}
@@ -455,7 +538,7 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                         >
                           {page.name}
                         </a>
-                      ))}
+                      ))} */}
                     </div>
                   </Popover.Group>
 

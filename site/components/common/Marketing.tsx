@@ -15,11 +15,11 @@ export default function Marketing({ products }: Props) {
               style={{ height: '70vh' }}
               key={product.id}
             >
-              {product.images.map((image: any) => {
+              {product.images.map((image: any, i: number) => {
                 if (image.isDefault) {
                   return (
                     <img
-                      key={image.id}
+                      key={i}
                       src={image.url}
                       alt={image.alt}
                       className="absolute inset-0 h-full w-full object-cover object-center"

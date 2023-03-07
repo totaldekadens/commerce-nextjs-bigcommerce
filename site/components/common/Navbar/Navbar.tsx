@@ -15,7 +15,7 @@ interface NavbarProps {
 }
 
 const Navbar: FC<NavbarProps> = ({ links }) => {
-  console.log(links)
+  console.log('Länkar ' + links)
   return (
     <NavbarRoot>
       <Container clean className="mx-auto max-w-8xl px-6">
@@ -44,7 +44,7 @@ const Navbar: FC<NavbarProps> = ({ links }) => {
             <UserNav />
           </div>
         </div>
-         {process.env.COMMERCE_SEARCH_ENABLED && (
+        {process.env.COMMERCE_SEARCH_ENABLED && (
           <div className="flex pb-4 lg:px-6 lg:hidden">
             <Searchbar id="mobile-search" />
           </div>

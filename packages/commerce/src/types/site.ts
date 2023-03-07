@@ -41,11 +41,12 @@ export interface Brand {
 }
 
 /**
- * Operation to get site information. This includes categories and brands.
+ * Operation to get site information. This includes categories brands an categoryTree .
  */
 export type GetSiteInfoOperation = {
   data: {
     categories: Category[]
     brands: Brand[]
+    categoryTree: any
   }
 }

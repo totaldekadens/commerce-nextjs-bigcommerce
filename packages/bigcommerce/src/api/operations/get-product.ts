@@ -109,7 +109,7 @@ export default function getAllProductPathsOperation({
       if (locale && config.applyLocale) {
         setProductLocaleMeta(product)
       }
-      console.log(data)
+      //console.log(data)
       return { product: normalizeProduct(product as any) }
     }
 

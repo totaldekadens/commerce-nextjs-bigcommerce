@@ -19,6 +19,7 @@ import type { Page } from '@commerce/types/page'
 import type { Category } from '@commerce/types/site'
 import type { Link as LinkProps } from '../UserNav/MenuSidebarView'
 import NavbarCopy from '../Navbar/Navbar_copy'
+import { normalizeCategoryTree } from '@lib/normalize'
 const Loading = () => (
   <div className="w-80 h-80 flex items-center text-center justify-center p-3">
     <LoadingDots />
@@ -53,6 +54,7 @@ interface Props {
   pageProps: {
     pages?: Page[]
     categories: Category[]
+    categoryTree: any
   }
   children?: React.ReactNode
 }
@@ -110,16 +112,20 @@ const Layout: React.FC<Props> = ({
 }) => {
   const { acceptedCookies, onAcceptCookies } = useAcceptCookies()
   const { locale = 'en-US' } = useRouter()
-  const navBarlinks = categories.slice(0, 2).map((c) => ({
+  const navBarlinks = categories.map((c) => ({
     label: c.name,
     href: `/search/${c.slug}`,
   }))
-
+  //console.log(pageProps.categoryTree)
+  const hej = normalizeCategoryTree(pageProps.categoryTree)
+  //console.log(pageProps)
+  //console.log(categories)
+  //console.log(navBarlinks)
   return (
     <CommerceProvider locale={locale}>
       <div className={cn(s.root)}>
         {/*  <Navbar links={navBarlinks} /> */}
-        <NavbarCopy links={navBarlinks} />
+        <NavbarCopy links={hej} />
         <main className="fit">{children}</main>
         {/* <Footer pages={pageProps.pages} /> */}
         <FooterCopy pages={pageProps.pages} />
