@@ -6,6 +6,7 @@ interface Props {
 }
 
 export function ProductCard({ products, setOpenCart }: Props) {
+  console.log(products)
   //console.log(products)
   return (
     <>
@@ -34,19 +35,26 @@ export function ProductCard({ products, setOpenCart }: Props) {
               >
                 {product.options
                   ? product.options.map((option: any, i: number) => {
-                      if (option.displayName == 'Color') {
+                      if (
+                        option.displayName == 'Color' ||
+                        option.displayName == 'Färg'
+                      ) {
                         return option.values.map((value: any, i: number) => {
                           return (
                             <li
                               key={i}
                               className="h-4 w-4 rounded-full border border-black border-opacity-10"
                               style={{
-                                backgroundColor: value.hexColors[0],
+                                backgroundColor: value.hexColors[0]
+                                  ? value.hexColors[0]
+                                  : value.label,
                               }}
                             >
                               <span className="sr-only">
                                 {' '}
-                                {value.hexColors[0]}{' '}
+                                {value.hexColors[0]
+                                  ? value.hexColors[0]
+                                  : value.label}{' '}
                               </span>
                             </li>
                           )

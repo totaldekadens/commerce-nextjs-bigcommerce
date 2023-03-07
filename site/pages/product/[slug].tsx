@@ -30,13 +30,10 @@ export async function getStaticProps({
   })
 
   const { pages } = await pagesPromise
-  let { categories, categoryTree } = await siteInfoPromise
+  let { categories } = await siteInfoPromise
   const { product } = await productPromise
   const { products: relatedProducts } = await allProductsPromise
 
-  if (!categoryTree) {
-    categoryTree = null
-  }
   if (!product) {
     return {
       notFound: true,
@@ -49,7 +46,6 @@ export async function getStaticProps({
       product,
       relatedProducts,
       categories,
-      categoryTree,
     },
     revalidate: 200,
   }
@@ -57,7 +53,6 @@ export async function getStaticProps({
 
 export async function getStaticPaths({ locales }: GetStaticPathsContext) {
   const { products } = await commerce.getAllProductPaths()
-  //console.log(products)
 
   return {
     paths: locales
@@ -77,12 +72,9 @@ export default function Slug({
   product,
   relatedProducts,
   categories,
-  categoryTree,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter()
-  //console.log(product)
-  //console.log(categoryTree)
-  //console.log('produktsida')
+
   return router.isFallback ? (
     <h1>Loading...</h1>
   ) : (

@@ -44,58 +44,11 @@ import {
   getActiveCategory,
   getActiveCategoryTree,
 } from '@lib/hooks/useCategoryHooks'
-
-const sortOptions = [
-  { name: 'Most Popular', href: '#', current: true },
-  { name: 'Best Rating', href: '#', current: false },
-  { name: 'Newest', href: '#', current: false },
-  { name: 'Price: Low to High', href: '#', current: false },
-  { name: 'Price: High to Low', href: '#', current: false },
-]
-
-const filters = [
-  {
-    id: 'color',
-    name: 'Color',
-    options: [
-      { value: 'white', label: 'White', checked: false },
-      { value: 'beige', label: 'Beige', checked: false },
-      { value: 'blue', label: 'Blue', checked: true },
-      { value: 'brown', label: 'Brown', checked: false },
-      { value: 'green', label: 'Green', checked: false },
-      { value: 'purple', label: 'Purple', checked: false },
-    ],
-  },
-  {
-    id: 'category',
-    name: 'Category',
-    options: [
-      { value: 'new-arrivals', label: 'New Arrivals', checked: false },
-      { value: 'sale', label: 'Sale', checked: false },
-      { value: 'travel', label: 'Travel', checked: true },
-      { value: 'organization', label: 'Organization', checked: false },
-      { value: 'accessories', label: 'Accessories', checked: false },
-    ],
-  },
-  {
-    id: 'size',
-    name: 'Size',
-    options: [
-      { value: '2l', label: '2L', checked: false },
-      { value: '6l', label: '6L', checked: false },
-      { value: '12l', label: '12L', checked: false },
-      { value: '18l', label: '18L', checked: false },
-      { value: '20l', label: '20L', checked: false },
-      { value: '40l', label: '40L', checked: true },
-    ],
-  },
-]
+import { filters, sortOptions } from '@lib/data/navigation'
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
 }
-
-// Flytta denna till utils
 
 export default function SearchCopy({
   categories,
@@ -113,13 +66,18 @@ export default function SearchCopy({
   const query = filterQuery({ sort })
 
   const { pathname, category, brand } = useSearchMeta(asPath)
+
+  // Gets the last slug in path
   let getLength = router.query.category?.length
 
   let activeCategorySlug = router.query.category
     ? router.query.category[getLength ? getLength - 1 : 0]
     : undefined
 
+  // Gets active category
   const activeCategory = getActiveCategory(categoryTree, activeCategorySlug)
+
+  // Gets all sub categories
   const activeCategoryTree = getActiveCategoryTree(
     categoryTree,
     activeCategorySlug
@@ -481,7 +439,10 @@ export default function SearchCopy({
                       >
                         {product.options
                           ? product.options.map((option: any) => {
-                              if (option.displayName == 'Color') {
+                              if (
+                                option.displayName == 'Color' ||
+                                option.displayName == 'Färg'
+                              ) {
                                 return option.values.map(
                                   (value: any, i: number) => {
                                     return (
@@ -489,12 +450,16 @@ export default function SearchCopy({
                                         key={i}
                                         className="h-4 w-4 rounded-full border border-black border-opacity-10"
                                         style={{
-                                          backgroundColor: value.hexColors[0],
+                                          backgroundColor: value.hexColors
+                                            ? value.hexColors[0]
+                                            : value.label,
                                         }}
                                       >
                                         <span className="sr-only">
                                           {' '}
-                                          {value.hexColors[0]}{' '}
+                                          {value.hexColors
+                                            ? value.hexColors[0]
+                                            : value.label}{' '}
                                         </span>
                                       </li>
                                     )
