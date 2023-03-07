@@ -388,18 +388,25 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                                                             getSlug(item.path)
                                                           }
                                                         >
-                                                          <div
-                                                            className="mt-6 block font-medium text-gray-900"
-                                                            onClick={() =>
-                                                              setOpen(false)
-                                                            }
+                                                          <Popover.Button
+                                                            className={classNames(
+                                                              open ? '' : '',
+                                                              ' duration-200 ease-out'
+                                                            )}
                                                           >
-                                                            <span
-                                                              className="absolute inset-0 z-10"
-                                                              aria-hidden="true"
-                                                            />
-                                                            {item.name}
-                                                          </div>
+                                                            <div
+                                                              className="mt-6 block font-medium text-gray-900"
+                                                              onClick={() =>
+                                                                setOpen(false)
+                                                              }
+                                                            >
+                                                              <span
+                                                                className="absolute inset-0 z-10"
+                                                                aria-hidden="true"
+                                                              />
+                                                              {item.name}
+                                                            </div>
+                                                          </Popover.Button>
                                                         </Link>
                                                         <p
                                                           aria-hidden="true"
@@ -443,14 +450,23 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                                                                           )
                                                                         }
                                                                       >
-                                                                        <p
-                                                                          id={`${section.name}-heading`}
-                                                                          className="font-medium text-gray-900"
+                                                                        <Popover.Button
+                                                                          className={classNames(
+                                                                            open
+                                                                              ? ''
+                                                                              : '',
+                                                                            'duration-200 ease-out'
+                                                                          )}
                                                                         >
-                                                                          {
-                                                                            section.name
-                                                                          }
-                                                                        </p>
+                                                                          <p
+                                                                            id={`${section.name}-heading`}
+                                                                            className="font-medium text-gray-900"
+                                                                          >
+                                                                            {
+                                                                              section.name
+                                                                            }
+                                                                          </p>
+                                                                        </Popover.Button>
                                                                       </Link>
                                                                       <ul
                                                                         role="list"
@@ -495,18 +511,27 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                                                                                       )
                                                                                     }
                                                                                   >
-                                                                                    <div
-                                                                                      className="hover:text-gray-800"
-                                                                                      onClick={() =>
-                                                                                        setOpen(
-                                                                                          false
-                                                                                        )
-                                                                                      }
+                                                                                    <Popover.Button
+                                                                                      className={classNames(
+                                                                                        open
+                                                                                          ? ''
+                                                                                          : '',
+                                                                                        'duration-200 ease-out'
+                                                                                      )}
                                                                                     >
-                                                                                      {
-                                                                                        item.name
-                                                                                      }
-                                                                                    </div>
+                                                                                      <div
+                                                                                        className="hover:text-gray-800"
+                                                                                        onClick={() =>
+                                                                                          setOpen(
+                                                                                            false
+                                                                                          )
+                                                                                        }
+                                                                                      >
+                                                                                        {
+                                                                                          item.name
+                                                                                        }
+                                                                                      </div>
+                                                                                    </Popover.Button>
                                                                                   </Link>
                                                                                 </li>
                                                                               )
