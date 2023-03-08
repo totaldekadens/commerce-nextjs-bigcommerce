@@ -1,7 +1,7 @@
 import cn from 'clsx'
 import type { SearchPropsType } from '@lib/search-props'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import type { Brand } from '@commerce/types/site'
@@ -34,6 +34,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import {
   ChevronDownIcon,
   FunnelIcon,
+  HomeIcon,
   MinusIcon,
   PlusIcon,
   Squares2X2Icon,
@@ -44,7 +45,8 @@ import {
   getActiveCategory,
   getActiveCategoryTree,
 } from '@lib/hooks/useCategoryHooks'
-import { filters, sortOptions } from '@lib/data/navigation'
+import { sortOptions } from '@lib/data/navigation'
+import Breadcrumbs from './common/Breadcrumbs/Breadcrumbs'
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
@@ -56,7 +58,7 @@ export default function SearchCopy({
   categoryTree,
 }: SearchPropsType) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
-  const [breadcrumbs, setBreadcrumbs] = useState([])
+  const [filters, setFilters] = useState<any>([])
   const router = useRouter()
   const { asPath, locale } = router
   const { q, sort } = router.query
@@ -117,9 +119,43 @@ export default function SearchCopy({
     list.push(category)
   })
 
+  // Filtering all options of displayed products
+  useEffect(() => {
+    if (data) {
+      const names: any[] = []
+      const getData = data.products.filter(
+        (product) => product.options.length > 0
+      )
+      getData.forEach((product) => {
+        return product.options.map((option) => {
+          const findDisplayName = names.find(
+            (item) => item.name == option.displayName
+          )
+          if (!findDisplayName) {
+            names.push({ name: option.displayName, values: [] })
+          }
+          option.values.forEach((value) => {
+            const findDisplayName: any = names.find(
+              (item) => item.name == option.displayName
+            )
+            const findValue = findDisplayName.values.find(
+              (hej: any) => hej == value.label
+            )
+            if (!findValue) {
+              findDisplayName.values.push(value.label)
+            }
+          })
+        })
+      })
+      setFilters(names)
+    }
+  }, [data])
+
   if (error) {
     return <ErrorMessage error={error} />
   }
+
+  //console.log(filters1)
 
   /*   const handleClick = (event: any, filter: string) => {
     if (filter !== activeFilter) {
@@ -196,10 +232,10 @@ export default function SearchCopy({
                       ))}
                     </ul>
 
-                    {filters.map((section) => (
+                    {filters.map((section: any) => (
                       <Disclosure
                         as="div"
-                        key={section.id}
+                        key={section.name}
                         className="border-t border-gray-200 px-4 py-6"
                       >
                         {({ open }) => (
@@ -226,27 +262,29 @@ export default function SearchCopy({
                             </h3>
                             <Disclosure.Panel className="pt-6">
                               <div className="space-y-6">
-                                {section.options.map((option, optionIdx) => (
-                                  <div
-                                    key={option.value}
-                                    className="flex items-center"
-                                  >
-                                    <input
-                                      id={`filter-mobile-${section.id}-${optionIdx}`}
-                                      name={`${section.id}[]`}
-                                      defaultValue={option.value}
-                                      type="checkbox"
-                                      defaultChecked={option.checked}
-                                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                    />
-                                    <label
-                                      htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
-                                      className="ml-3 min-w-0 flex-1 text-gray-500"
+                                {section.values.map(
+                                  (option: any, optionIdx: number) => (
+                                    <div
+                                      key={option}
+                                      className="flex items-center"
                                     >
-                                      {option.label}
-                                    </label>
-                                  </div>
-                                ))}
+                                      <input
+                                        id={`filter-mobile-${section.id}-${optionIdx}`}
+                                        name={`${section.id}[]`}
+                                        defaultValue={option.value}
+                                        type="checkbox"
+                                        defaultChecked={option.checked}
+                                        className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                      />
+                                      <label
+                                        htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
+                                        className="ml-3 min-w-0 flex-1 text-gray-500"
+                                      >
+                                        {option}
+                                      </label>
+                                    </div>
+                                  )
+                                )}
                               </div>
                             </Disclosure.Panel>
                           </>
@@ -263,12 +301,7 @@ export default function SearchCopy({
         <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-baseline justify-between border-b border-gray-200 pt-20 pb-6">
             <div>
-              <Link href={'/'}>Hem </Link>
-              {list.map((path, i) => (
-                <Link key={i} href={path.path}>
-                  {' /  ' + path.name}
-                </Link>
-              ))}
+              <Breadcrumbs list={list} />
               <h1 className="text-4xl font-bold tracking-tight text-gray-900 pt-4">
                 {activeCategory?.name}
               </h1>
@@ -362,10 +395,10 @@ export default function SearchCopy({
                       ))}
                 </ul>
 
-                {filters.map((section) => (
+                {filters.map((section: any) => (
                   <Disclosure
                     as="div"
-                    key={section.id}
+                    key={section.name}
                     className="border-b border-gray-200 py-6"
                   >
                     {({ open }) => (
@@ -392,27 +425,26 @@ export default function SearchCopy({
                         </h3>
                         <Disclosure.Panel className="pt-6">
                           <div className="space-y-4">
-                            {section.options.map((option, optionIdx) => (
-                              <div
-                                key={option.value}
-                                className="flex items-center"
-                              >
-                                <input
-                                  id={`filter-${section.id}-${optionIdx}`}
-                                  name={`${section.id}[]`}
-                                  defaultValue={option.value}
-                                  type="checkbox"
-                                  defaultChecked={option.checked}
-                                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                />
-                                <label
-                                  htmlFor={`filter-${section.id}-${optionIdx}`}
-                                  className="ml-3 text-sm text-gray-600"
-                                >
-                                  {option.label}
-                                </label>
-                              </div>
-                            ))}
+                            {section.values.map(
+                              (option: any, optionIdx: number) => (
+                                <div key={option} className="flex items-center">
+                                  <input
+                                    id={`filter-${section.id}-${optionIdx}`}
+                                    name={`${section.id}[]`}
+                                    defaultValue={option}
+                                    type="checkbox"
+                                    defaultChecked={option.checked}
+                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                  />
+                                  <label
+                                    htmlFor={`filter-${section.id}-${optionIdx}`}
+                                    className="ml-3 text-sm text-gray-600"
+                                  >
+                                    {option}
+                                  </label>
+                                </div>
+                              )
+                            )}
                           </div>
                         </Disclosure.Panel>
                       </>

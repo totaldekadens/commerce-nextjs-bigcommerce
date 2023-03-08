@@ -450,7 +450,7 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                                                               aria-hidden="true"
                                                               className="mt-1"
                                                             >
-                                                              Shop now
+                                                              Shoppa nu
                                                             </p>
                                                           </div>
                                                         ))}
@@ -503,7 +503,7 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                                                                               >
                                                                                 <p
                                                                                   id={`${section.name}-heading`}
-                                                                                  className="font-medium text-gray-900"
+                                                                                  className="font-medium text-gray-900 text-start"
                                                                                 >
                                                                                   {
                                                                                     section.name
@@ -562,13 +562,13 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                                                                                             <Popover.Button
                                                                                               className={classNames(
                                                                                                 open
-                                                                                                  ? ''
+                                                                                                  ? 'test-start'
                                                                                                   : '',
                                                                                                 'duration-200 ease-out'
                                                                                               )}
                                                                                             >
                                                                                               <div
-                                                                                                className="hover:text-gray-800"
+                                                                                                className="hover:text-gray-800 text-start"
                                                                                                 onClick={() =>
                                                                                                   setOpen(
                                                                                                     false
