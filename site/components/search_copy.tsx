@@ -156,8 +156,6 @@ export default function SearchCopy({
     return <ErrorMessage error={error} />
   }
 
-  //console.log(filters1)
-
   /*   const handleClick = (event: any, filter: string) => {
     if (filter !== activeFilter) {
       setToggleFilter(true)
@@ -382,7 +380,11 @@ export default function SearchCopy({
                 <h3 className="sr-only">Categories</h3>
                 <ul
                   role="list"
-                  className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900"
+                  className={
+                    !activeCategoryTree.children
+                      ? 'space-y-4 pb-6 text-sm font-medium text-gray-900'
+                      : 'space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900'
+                  }
                 >
                   {!activeCategoryTree.children ||
                   activeCategoryTree.children.length < 1

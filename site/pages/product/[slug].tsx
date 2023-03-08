@@ -8,6 +8,9 @@ import commerce from '@lib/api/commerce'
 import { Layout } from '@components/common'
 //import { ProductView } from '@components/product'
 import ProductViewCopy from '@components/product/ProductView/ProductView_copy'
+import jagarlivApolloClient from '@lib/apollo/apollo'
+import { normalizeCategoryTree } from '@lib/normalize'
+import { getCategoryTreeQuery } from '@lib/queries'
 
 export async function getStaticProps({
   params,
@@ -28,6 +31,10 @@ export async function getStaticProps({
     config,
     preview,
   })
+  const { data } = await jagarlivApolloClient.query({
+    query: getCategoryTreeQuery,
+  })
+  const normailzedCategoryTree = normalizeCategoryTree(data.site.categoryTree)
 
   const { pages } = await pagesPromise
   let { categories } = await siteInfoPromise
@@ -42,6 +49,7 @@ export async function getStaticProps({
 
   return {
     props: {
+      categoryTree: normailzedCategoryTree,
       pages,
       product,
       relatedProducts,
@@ -72,6 +80,7 @@ export default function Slug({
   product,
   relatedProducts,
   categories,
+  categoryTree,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter()
 
