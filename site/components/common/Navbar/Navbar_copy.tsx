@@ -117,97 +117,116 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                         {!links
                           ? null
                           : links.map((category) => (
-                              <Tab
-                                key={category.name}
-                                className={({ selected }) =>
-                                  classNames(
-                                    selected
-                                      ? 'text-indigo-600 border-indigo-600'
-                                      : 'text-gray-900 border-transparent',
-                                    'flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-base font-medium'
-                                  )
-                                }
-                              >
-                                {category.name}
-                              </Tab>
+                              <>
+                                {category.name == 'Fyndhörna' ||
+                                category.name == 'Julklappstips' ? null : (
+                                  <Tab
+                                    key={category.name}
+                                    className={({ selected }) =>
+                                      classNames(
+                                        selected
+                                          ? 'text-indigo-600 border-indigo-600'
+                                          : 'text-gray-900 border-transparent',
+                                        'flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-base font-medium'
+                                      )
+                                    }
+                                  >
+                                    {category.name}
+                                  </Tab>
+                                )}
+                              </>
                             ))}
                       </Tab.List>
                     </div>
                     <Tab.Panels as={Fragment}>
-                      {navigation.categories.map((category) => (
-                        <Tab.Panel
-                          key={category.name}
-                          className="space-y-10 px-4 pt-10 pb-8"
-                        >
-                          <div className="grid grid-cols-2 gap-x-4">
-                            {category.featured.map((item) => (
-                              <div
-                                key={item.name}
-                                className="group relative text-sm"
-                              >
-                                <div className="aspect-w-1 aspect-h-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-                                  <img
-                                    src={item.imageSrc}
-                                    alt={item.imageAlt}
-                                    className="object-cover object-center"
-                                    onClick={() => setOpen(false)}
-                                  />
-                                </div>
-                                <Link href={'/search/' + item.href}>
-                                  <div
-                                    className="mt-6 block font-medium text-gray-900"
-                                    onClick={() => setOpen(false)}
-                                  >
-                                    <span
-                                      className="absolute inset-0 z-10"
-                                      aria-hidden="true"
-                                    />
-                                    {item.name}
-                                  </div>
-                                </Link>
-                                <p aria-hidden="true" className="mt-1">
-                                  Shop now
-                                </p>
+                      {!links
+                        ? null
+                        : links.map((category) => (
+                            <Tab.Panel
+                              key={category.name}
+                              className="space-y-10 px-4 pt-10 pb-8"
+                            >
+                              <div className="grid grid-cols-2 gap-x-4">
+                                {!category.children
+                                  ? null
+                                  : category.children
+                                      .slice(0, 2)
+                                      .map((item) => (
+                                        <div
+                                          key={item.name}
+                                          className="group relative text-sm"
+                                        >
+                                          <div className="aspect-w-1 aspect-h-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+                                            {/* placeholder */}
+                                            <img
+                                              src={
+                                                'https://cdn.pixabay.com/photo/2016/11/22/19/25/man-1850181_960_720.jpg'
+                                              }
+                                              alt={'bild'}
+                                              className="object-cover object-center"
+                                              onClick={() => setOpen(false)}
+                                            />
+                                          </div>
+                                          <Link href={'/search' + item.path}>
+                                            <div
+                                              className="mt-6 block font-medium text-gray-900"
+                                              onClick={() => setOpen(false)}
+                                            >
+                                              <span
+                                                className="absolute inset-0 z-10"
+                                                aria-hidden="true"
+                                              />
+                                              {item.name}
+                                            </div>
+                                          </Link>
+                                          <p
+                                            aria-hidden="true"
+                                            className="mt-1"
+                                          >
+                                            Shop now
+                                          </p>
+                                        </div>
+                                      ))}
                               </div>
-                            ))}
-                          </div>
-                          {category.sections.map((section) => (
-                            <div key={section.name}>
-                              <p
-                                id={`${category.id}-${section.id}-heading-mobile`}
-                                className="font-medium text-gray-900"
-                              >
-                                {section.name}
-                              </p>
-                              <ul
-                                role="list"
-                                aria-labelledby={`${category.id}-${section.id}-heading-mobile`}
-                                className="mt-6 flex flex-col space-y-6"
-                              >
-                                {section.items.map((item) => (
-                                  <li
-                                    key={item.name}
-                                    className="flow-root"
-                                    onClick={() => setOpen(false)}
+                              {category.children.map((section) => (
+                                <div key={section.name}>
+                                  <p
+                                    id={`${category.entityId}-${category.entityId}-heading-mobile`}
+                                    className="font-medium text-gray-900"
                                   >
-                                    <Link
-                                      href={'/search/' + item.href}
-                                      onClick={() => setOpen(false)}
-                                    >
-                                      <div
-                                        className="-m-2 block p-2 text-gray-500 "
-                                        onClick={() => setOpen(false)}
-                                      >
-                                        {item.name}
-                                      </div>
-                                    </Link>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
+                                    {section.name}
+                                  </p>
+                                  <ul
+                                    role="list"
+                                    aria-labelledby={`${category.entityId}-${category.entityId}-heading-mobile`}
+                                    className="mt-6 flex flex-col space-y-6"
+                                  >
+                                    {!section.children
+                                      ? null
+                                      : section.children.map((item) => (
+                                          <li
+                                            key={item.name}
+                                            className="flow-root"
+                                            onClick={() => setOpen(false)}
+                                          >
+                                            <Link
+                                              href={'/search' + item.path}
+                                              onClick={() => setOpen(false)}
+                                            >
+                                              <div
+                                                className="-m-2 block p-2 text-gray-500 "
+                                                onClick={() => setOpen(false)}
+                                              >
+                                                {item.name}
+                                              </div>
+                                            </Link>
+                                          </li>
+                                        ))}
+                                  </ul>
+                                </div>
+                              ))}
+                            </Tab.Panel>
                           ))}
-                        </Tab.Panel>
-                      ))}
                     </Tab.Panels>
                   </Tab.Group>
 
