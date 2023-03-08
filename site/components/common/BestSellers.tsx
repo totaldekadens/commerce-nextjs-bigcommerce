@@ -11,7 +11,7 @@ export default function BestSellers({ products }: Props) {
       <div className="py-16 sm:py-24 lg:mx-auto ">
         <div className="flex items-center justify-center px-4 sm:px-6 lg:px-0">
           <h2 className="text-4xl font-bold tracking-tight text-gray-900">
-            Trending Products
+            Våra mest populära produkter
           </h2>
         </div>
         <div className="relative mt-8">

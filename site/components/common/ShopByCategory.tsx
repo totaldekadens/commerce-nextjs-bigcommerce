@@ -9,7 +9,7 @@ export default function ShopByCategory() {
           </h2>
           <Link href="/search">
             <div className="hidden text-sm font-semibold text-indigo-600 hover:text-indigo-500 sm:block">
-              Browse all categories
+              Se alla kategorier
               <span aria-hidden="true"> &rarr;</span>
             </div>
           </Link>

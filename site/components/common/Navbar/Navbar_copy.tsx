@@ -1,8 +1,8 @@
-import { FC } from 'react'
+import { FC, useRef } from 'react'
 import { Searchbar, UserNav } from '@components/common'
 import { Fragment, useState } from 'react'
 import { Dialog, Popover, Tab, Transition } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { Bars3Icon, UserIcon, XMarkIcon } from '@heroicons/react/24/outline'
 //import { navigation } from '../../utils/data/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -13,6 +13,7 @@ import Cart from '../Cart'
 import { navigation } from '@lib/data/navigation'
 import UserNavCopy from '../UserNav/UserNav_Copy'
 import getSlug from '@lib/get-slug'
+import { IconUser } from '@tabler/icons-react'
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
 }
@@ -46,6 +47,15 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
       setUSPHeight(40 - scrollY)
     }
   }, [scrollY])
+
+  const list = [
+    { id: 239, children: [90, 105, 170] }, // Fritid
+    { id: 238, children: [74] }, // Jakt
+    { id: 240, children: [169, 167] }, // Fiske
+  ]
+
+  //const getFixedLinks = links?.map()
+  console.log(links)
 
   return (
     <>
@@ -323,236 +333,271 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                       {!links
                         ? null
                         : links.map((category) => (
-                            <Popover key={category.name} className="flex">
-                              {({ open }) => (
-                                <>
-                                  <div className="relative flex">
-                                    <Popover.Button
-                                      className={classNames(
-                                        open
-                                          ? 'border-indigo-600 text-indigo-600'
-                                          : 'border-transparent text-gray-700 hover:text-gray-800',
-                                        'relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium transition-colors duration-200 ease-out'
-                                      )}
-                                    >
-                                      {category.name}
-                                    </Popover.Button>
-                                  </div>
+                            <>
+                              {category.name == 'Fyndhörna' ||
+                              category.name == 'Julklappstips' ? null : (
+                                <Popover key={category.name} className="flex">
+                                  {({ open }) => (
+                                    <>
+                                      <div className="relative flex">
+                                        <Popover.Button
+                                          className={classNames(
+                                            open
+                                              ? 'border-indigo-600 text-indigo-600'
+                                              : 'border-transparent text-gray-700 hover:text-gray-800',
+                                            'relative z-10 -mb-px flex items-center border-b-2 pt-px text-sm font-medium transition-colors duration-200 ease-out'
+                                          )}
+                                        >
+                                          {category.name}
+                                        </Popover.Button>
+                                      </div>
 
-                                  <Transition
-                                    as={Fragment}
-                                    enter="transition ease-out duration-200"
-                                    enterFrom="opacity-0"
-                                    enterTo="opacity-100"
-                                    leave="transition ease-in duration-150"
-                                    leaveFrom="opacity-100"
-                                    leaveTo="opacity-0"
-                                  >
-                                    <Popover.Panel className="absolute inset-x-0 top-full text-sm text-gray-500">
-                                      {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow */}
-                                      <div
-                                        className="absolute inset-0 top-1/2 bg-white shadow"
-                                        aria-hidden="true"
-                                      />
+                                      <Transition
+                                        as={Fragment}
+                                        enter="transition ease-out duration-200"
+                                        enterFrom="opacity-0"
+                                        enterTo="opacity-100"
+                                        leave="transition ease-in duration-150"
+                                        leaveFrom="opacity-100"
+                                        leaveTo="opacity-0"
+                                      >
+                                        <Popover.Panel className="absolute inset-x-0 top-full text-sm text-gray-500">
+                                          {/* Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the top, so we use this shorter element to hide the top of the shadow */}
+                                          <div
+                                            className="absolute inset-0 top-1/2 bg-white shadow"
+                                            aria-hidden="true"
+                                          />
 
-                                      <div className="relative bg-white">
-                                        <div className="mx-auto max-w-7xl px-8">
-                                          <div className="grid grid-cols-2 gap-y-10 gap-x-8 py-16">
-                                            <div className="col-start-2 grid grid-cols-2 gap-x-8">
-                                              {/* Featured */}
-                                              {!category.children
-                                                ? null
-                                                : category.children
-                                                    .slice(0, 2)
-                                                    .map((item) => (
-                                                      <div
-                                                        key={item.name}
-                                                        className="group relative text-base sm:text-sm"
-                                                        onClick={() =>
-                                                          setOpen(false)
-                                                        }
-                                                      >
-                                                        <div className="aspect-w-1 aspect-h-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-                                                          {/* placeholder atm */}
-                                                          <img
-                                                            src={
-                                                              'https://cdn.pixabay.com/photo/2016/11/22/19/25/man-1850181_960_720.jpg'
+                                          <div className="relative bg-white">
+                                            <div className="mx-auto max-w-7xl px-8">
+                                              <div className="grid grid-cols-2 gap-y-10 gap-x-8 py-16">
+                                                <div className="col-start-2 grid grid-cols-2 gap-x-8">
+                                                  {/* Featured */}
+                                                  {!category.children
+                                                    ? null
+                                                    : category.children
+                                                        .slice(0, 2)
+                                                        .map((item) => (
+                                                          <div
+                                                            key={item.name}
+                                                            className="group relative text-base sm:text-sm"
+                                                            onClick={() =>
+                                                              setOpen(false)
                                                             }
-                                                            alt={'bild'}
-                                                            className="object-cover object-center"
-                                                          />
-                                                        </div>
-                                                        <Link
-                                                          href={
-                                                            '/search/' +
-                                                            getSlug(item.path)
-                                                          }
-                                                        >
-                                                          <Popover.Button
-                                                            className={classNames(
-                                                              open ? '' : '',
-                                                              ' duration-200 ease-out'
-                                                            )}
                                                           >
-                                                            <div
-                                                              className="mt-6 block font-medium text-gray-900"
-                                                              onClick={() =>
-                                                                setOpen(false)
+                                                            <div className="aspect-w-1 aspect-h-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+                                                              {/* placeholder atm */}
+                                                              <img
+                                                                src={
+                                                                  'https://cdn.pixabay.com/photo/2016/11/22/19/25/man-1850181_960_720.jpg'
+                                                                }
+                                                                alt={'bild'}
+                                                                className="object-cover object-center"
+                                                              />
+                                                            </div>
+                                                            <Link
+                                                              href={
+                                                                '/search/' +
+                                                                getSlug(
+                                                                  item.path
+                                                                )
                                                               }
                                                             >
-                                                              <span
-                                                                className="absolute inset-0 z-10"
-                                                                aria-hidden="true"
-                                                              />
-                                                              {item.name}
-                                                            </div>
-                                                          </Popover.Button>
-                                                        </Link>
-                                                        <p
-                                                          aria-hidden="true"
-                                                          className="mt-1"
-                                                        >
-                                                          Shop now
-                                                        </p>
-                                                      </div>
-                                                    ))}
-                                            </div>
-                                            <div className="row-start-1 grid grid-cols-3 gap-y-10 gap-x-8 text-sm">
-                                              {category.children.length < 1
-                                                ? null
-                                                : category.children.map(
-                                                    (section) =>
-                                                      section.children.length <
-                                                      1
-                                                        ? null
-                                                        : section.children.map(
-                                                            (section) => (
-                                                              <>
-                                                                {section
-                                                                  .children
-                                                                  .length <
-                                                                1 ? null : (
-                                                                  <>
-                                                                    <div
-                                                                      key={
-                                                                        section.name
-                                                                      }
-                                                                    >
-                                                                      <Link
-                                                                        href={
-                                                                          '/search/' +
-                                                                          getSlug(
-                                                                            category.path
-                                                                          ) +
-                                                                          '/' +
-                                                                          getSlug(
-                                                                            section.path
-                                                                          )
-                                                                        }
-                                                                      >
-                                                                        <Popover.Button
-                                                                          className={classNames(
-                                                                            open
-                                                                              ? ''
-                                                                              : '',
-                                                                            'duration-200 ease-out'
-                                                                          )}
-                                                                        >
-                                                                          <p
-                                                                            id={`${section.name}-heading`}
-                                                                            className="font-medium text-gray-900"
-                                                                          >
-                                                                            {
+                                                              <Popover.Button
+                                                                className={classNames(
+                                                                  open
+                                                                    ? ''
+                                                                    : '',
+                                                                  ' duration-200 ease-out'
+                                                                )}
+                                                              >
+                                                                <div
+                                                                  className="mt-6 block font-medium text-gray-900"
+                                                                  onClick={() =>
+                                                                    setOpen(
+                                                                      false
+                                                                    )
+                                                                  }
+                                                                >
+                                                                  <span
+                                                                    className="absolute inset-0 z-10"
+                                                                    aria-hidden="true"
+                                                                  />
+                                                                  {item.name}
+                                                                </div>
+                                                              </Popover.Button>
+                                                            </Link>
+                                                            <p
+                                                              aria-hidden="true"
+                                                              className="mt-1"
+                                                            >
+                                                              Shop now
+                                                            </p>
+                                                          </div>
+                                                        ))}
+                                                </div>
+                                                <div className="w-full flex justify-end">
+                                                  <span className="pb-5 h-7"></span>
+                                                </div>
+                                                <div className="row-start-1 grid grid-cols-3 gap-y-10 gap-x-8 text-sm">
+                                                  {category.children.length < 1
+                                                    ? null
+                                                    : category.children.map(
+                                                        (section) =>
+                                                          section.children
+                                                            .length < 1
+                                                            ? null
+                                                            : section.children
+                                                                .slice(0, 2)
+                                                                .map(
+                                                                  (section) => (
+                                                                    <>
+                                                                      {section
+                                                                        .children
+                                                                        .length <
+                                                                      1 ? null : (
+                                                                        <>
+                                                                          <div
+                                                                            key={
                                                                               section.name
                                                                             }
-                                                                          </p>
-                                                                        </Popover.Button>
-                                                                      </Link>
-                                                                      <ul
-                                                                        role="list"
-                                                                        aria-labelledby={`${section.name}-heading`}
-                                                                        className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
-                                                                      >
-                                                                        {section
-                                                                          .children
-                                                                          .length <
-                                                                          1 &&
-                                                                        section.productCount <
-                                                                          1
-                                                                          ? null
-                                                                          : section.children.map(
-                                                                              (
-                                                                                item
-                                                                              ) => (
-                                                                                <li
-                                                                                  key={
-                                                                                    item.name
-                                                                                  }
-                                                                                  className="flex"
-                                                                                  onClick={() =>
-                                                                                    setOpen(
-                                                                                      false
-                                                                                    )
-                                                                                  }
+                                                                          >
+                                                                            <Link
+                                                                              href={
+                                                                                '/search/' +
+                                                                                getSlug(
+                                                                                  category.path
+                                                                                ) +
+                                                                                '/' +
+                                                                                getSlug(
+                                                                                  section.path
+                                                                                )
+                                                                              }
+                                                                            >
+                                                                              <Popover.Button
+                                                                                className={classNames(
+                                                                                  open
+                                                                                    ? ''
+                                                                                    : '',
+                                                                                  'duration-200 ease-out'
+                                                                                )}
+                                                                              >
+                                                                                <p
+                                                                                  id={`${section.name}-heading`}
+                                                                                  className="font-medium text-gray-900"
                                                                                 >
-                                                                                  <Link
-                                                                                    href={
-                                                                                      '/search/' +
-                                                                                      getSlug(
-                                                                                        category.path
-                                                                                      ) +
-                                                                                      '/' +
-                                                                                      getSlug(
-                                                                                        section.path
-                                                                                      ) +
-                                                                                      '/' +
-                                                                                      getSlug(
-                                                                                        item.path
+                                                                                  {
+                                                                                    section.name
+                                                                                  }
+                                                                                </p>
+                                                                              </Popover.Button>
+                                                                            </Link>
+                                                                            <ul
+                                                                              role="list"
+                                                                              aria-labelledby={`${section.name}-heading`}
+                                                                              className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
+                                                                            >
+                                                                              {section
+                                                                                .children
+                                                                                .length <
+                                                                                1 &&
+                                                                              section.productCount <
+                                                                                1
+                                                                                ? null
+                                                                                : section.children
+                                                                                    .slice(
+                                                                                      0,
+                                                                                      8
+                                                                                    )
+                                                                                    .map(
+                                                                                      (
+                                                                                        item
+                                                                                      ) => (
+                                                                                        <li
+                                                                                          key={
+                                                                                            item.name
+                                                                                          }
+                                                                                          className="flex"
+                                                                                          onClick={() =>
+                                                                                            setOpen(
+                                                                                              false
+                                                                                            )
+                                                                                          }
+                                                                                        >
+                                                                                          <Link
+                                                                                            href={
+                                                                                              '/search/' +
+                                                                                              getSlug(
+                                                                                                category.path
+                                                                                              ) +
+                                                                                              '/' +
+                                                                                              getSlug(
+                                                                                                section.path
+                                                                                              ) +
+                                                                                              '/' +
+                                                                                              getSlug(
+                                                                                                item.path
+                                                                                              )
+                                                                                            }
+                                                                                          >
+                                                                                            <Popover.Button
+                                                                                              className={classNames(
+                                                                                                open
+                                                                                                  ? ''
+                                                                                                  : '',
+                                                                                                'duration-200 ease-out'
+                                                                                              )}
+                                                                                            >
+                                                                                              <div
+                                                                                                className="hover:text-gray-800"
+                                                                                                onClick={() =>
+                                                                                                  setOpen(
+                                                                                                    false
+                                                                                                  )
+                                                                                                }
+                                                                                              >
+                                                                                                {
+                                                                                                  item.name
+                                                                                                }
+                                                                                              </div>
+                                                                                            </Popover.Button>
+                                                                                          </Link>
+                                                                                        </li>
                                                                                       )
-                                                                                    }
-                                                                                  >
-                                                                                    <Popover.Button
-                                                                                      className={classNames(
-                                                                                        open
-                                                                                          ? ''
-                                                                                          : '',
-                                                                                        'duration-200 ease-out'
-                                                                                      )}
-                                                                                    >
-                                                                                      <div
-                                                                                        className="hover:text-gray-800"
-                                                                                        onClick={() =>
-                                                                                          setOpen(
-                                                                                            false
-                                                                                          )
-                                                                                        }
-                                                                                      >
-                                                                                        {
-                                                                                          item.name
-                                                                                        }
-                                                                                      </div>
-                                                                                    </Popover.Button>
-                                                                                  </Link>
-                                                                                </li>
-                                                                              )
-                                                                            )}
-                                                                      </ul>
-                                                                    </div>
-                                                                  </>
-                                                                )}
-                                                              </>
-                                                            )
-                                                          )
-                                                  )}
+                                                                                    )}
+                                                                            </ul>
+                                                                          </div>
+                                                                        </>
+                                                                      )}
+                                                                    </>
+                                                                  )
+                                                                )
+                                                      )}
+                                                </div>
+                                              </div>
                                             </div>
                                           </div>
-                                        </div>
-                                      </div>
-                                    </Popover.Panel>
-                                  </Transition>
-                                </>
+                                        </Popover.Panel>
+                                      </Transition>
+                                    </>
+                                  )}
+                                </Popover>
                               )}
-                            </Popover>
+                            </>
+                          ))}
+                      {!links
+                        ? null
+                        : links?.map((category) => (
+                            <>
+                              {category.name != 'Fyndhörna' ? null : (
+                                <Link
+                                  href={'/search' + category.path}
+                                  className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800"
+                                >
+                                  {category.name}
+                                </Link>
+                              )}
+                            </>
                           ))}
 
                       {/*  {navigation.pages.map((page) => (
@@ -570,19 +615,20 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                   <div className="ml-auto flex items-center">
                     <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
                       <Link href="/auth/signin">
-                        <div className="text-sm font-medium text-gray-700 hover:text-gray-800">
-                          Sign in
-                        </div>
+                        <UserIcon
+                          className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+                          aria-hidden="true"
+                        />
                       </Link>
                       <span
                         className="h-6 w-px bg-gray-200"
                         aria-hidden="true"
                       />
-                      <Link href="/auth/signup">
+                      {/*  <Link href="/auth/signup">
                         <div className="text-sm font-medium text-gray-700 hover:text-gray-800">
                           Create account
                         </div>
-                      </Link>
+                      </Link> */}
                     </div>
 
                     <div className="hidden lg:ml-8 lg:flex">
