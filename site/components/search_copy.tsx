@@ -47,6 +47,7 @@ import {
 } from '@lib/hooks/useCategoryHooks'
 import { sortOptions } from '@lib/data/navigation'
 import Breadcrumbs from './common/Breadcrumbs/Breadcrumbs'
+import { getEnglishColor } from '@lib/colors'
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
@@ -484,7 +485,7 @@ export default function SearchCopy({
                                         style={{
                                           backgroundColor: value.hexColors
                                             ? value.hexColors[0]
-                                            : value.label,
+                                            : getEnglishColor(value.label),
                                         }}
                                       >
                                         <span className="sr-only">

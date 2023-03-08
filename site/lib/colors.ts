@@ -204,3 +204,27 @@ export function isDark(color: string = ''): boolean {
   const res = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000
   return res < 128
 }
+
+export const getEnglishColor = (color: string) => {
+  const colorList = [
+    { sv: 'Röd', en: 'red' },
+    { sv: 'Grön', en: 'green' },
+    { sv: 'Gul', en: 'yellow' },
+    { sv: 'Blå', en: 'blue' },
+    { sv: 'Svart', en: 'black' },
+    { sv: 'Vit', en: 'white' },
+    { sv: 'Lila', en: 'purple' },
+    { sv: 'Rosa', en: 'pink' },
+    { sv: 'Brun', en: 'brown' },
+    { sv: 'Orange', en: 'orange' },
+    { sv: 'Grå', en: 'gray' },
+    { sv: 'Beige', en: 'beige' },
+  ]
+
+  const findColor = colorList.find((clr) => clr.sv == color)
+
+  if (findColor) {
+    return findColor.en
+  }
+  return 'white'
+}
