@@ -53,15 +53,29 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
 }
 
+interface Value {
+  name: string
+  value: string
+}
+
+interface FilterValue {
+  value: string
+  checked: boolean
+}
+
+interface Filter {
+  name: string
+  values: FilterValue[]
+}
+
 export default function SearchCopy({
   categories,
   brands,
   categoryTree,
 }: SearchPropsType) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
-  const [filters, setFilters] = useState<any>([])
-  const [values, setValues] = useState<any>([])
-
+  const [filters, setFilters] = useState<Filter[]>([])
+  const [values, setValues] = useState<Value[]>([])
   const router = useRouter()
   const { asPath, locale } = router
   const { q, sort } = router.query
@@ -102,15 +116,16 @@ export default function SearchCopy({
     data ? data.products : []
   )
 
-  // Påbörjat jämföra produkterna med filterlistan
+  interface OptionValue {
+    name: string
+    value: string
+  }
   useEffect(() => {
-    let allValues: any[] = []
-    if (data) {
+    let allValues: OptionValue[] = []
+    if (data && data.found) {
       // Creates a list of strings with checked options/values
-
-      //let valuesCopy = [...values]
-      filters.forEach((option: any) => {
-        return option.values.forEach((value: any) => {
+      filters.forEach((option) => {
+        return option.values.forEach((value) => {
           if (value.checked) {
             allValues.push({ name: option.name, value: value.value })
           }
@@ -126,23 +141,17 @@ export default function SearchCopy({
           product.options.forEach((option) => {
             console.log(allValues)
             if (allValues.length > 0) {
-              allValues.forEach((filter: any) => {
+              allValues.forEach((filter) => {
                 if (filter.name == option.displayName) {
                   option.values.forEach((value) => {
                     if (value.label == filter.value) {
-                      console.log(allValues.length)
-                      /*  const foundProduct = currentProducts.find(
-                          (item: Product) => item.id == product.id
-                        ) */
                       currentProducts2.push(product)
-
                       const getMatchedProduct = currentProducts2.filter(
                         (item) => item.id == product.id
                       )
                       if (getMatchedProduct.length == allValues.length) {
                         currentProducts.push(product)
                       }
-
                       setValues(allValues)
                     }
                   })
@@ -184,11 +193,11 @@ export default function SearchCopy({
     category = copy
     list.push(category)
   })
-
+  console.log(activeCategory)
   // Creates a list of all options and values (with no duplicates) of displayed products
   useEffect(() => {
-    if (data) {
-      const names: any[] = []
+    if (data && data.found) {
+      const names: Filter[] = []
       const getData = data.products.filter(
         (product) => product.options.length > 0
       )
@@ -201,17 +210,19 @@ export default function SearchCopy({
             names.push({ name: option.displayName, values: [] })
           }
           option.values.forEach((value) => {
-            const findDisplayName: any = names.find(
+            const findDisplayName: Filter | Filter[] | undefined = names.find(
               (item) => item.name == option.displayName
             )
-            const findValue = findDisplayName.values.find(
-              (hej: any) => hej.value == value.label
-            )
-            if (!findValue) {
-              findDisplayName.values.push({
-                value: value.label,
-                checked: false,
-              })
+            if (findDisplayName) {
+              const findValue = findDisplayName.values.find(
+                (hej) => hej.value == value.label
+              )
+              if (!findValue) {
+                findDisplayName.values.push({
+                  value: value.label,
+                  checked: false,
+                })
+              }
             }
           })
         })
@@ -232,7 +243,7 @@ export default function SearchCopy({
     }
     setActiveFilter(filter)
   } */
-
+  console.log(data)
   return (
     <div className="bg-white">
       <div>
@@ -288,18 +299,26 @@ export default function SearchCopy({
                       role="list"
                       className="px-2 py-3 font-medium text-gray-900"
                     >
-                      {categories.map((category) => (
-                        <li key={category.name}>
-                          <Link href={'search/' + category.slug}>
-                            <div className="block px-2 py-3">
-                              {category.name}
-                            </div>
-                          </Link>
-                        </li>
-                      ))}
+                      {!activeCategoryTree.children ||
+                      activeCategoryTree.children < 1 ? (
+                        <span>Inga underkategorier tillgängliga</span>
+                      ) : (
+                        activeCategoryTree.children.map((category: any) => (
+                          <li
+                            key={category.name}
+                            onClick={() => setMobileFiltersOpen(false)}
+                          >
+                            <Link href={asPath + '/' + getSlug(category.path)}>
+                              <div className="block px-2 py-3">
+                                {category.name}
+                              </div>
+                            </Link>
+                          </li>
+                        ))
+                      )}
                     </ul>
 
-                    {filters.map((section: any) => (
+                    {filters.map((section) => (
                       <Disclosure
                         as="div"
                         key={section.name}
@@ -330,24 +349,43 @@ export default function SearchCopy({
                             <Disclosure.Panel className="pt-6">
                               <div className="space-y-6">
                                 {section.values.map(
-                                  (option: any, optionIdx: number) => (
+                                  (option, optionIdx: number) => (
                                     <div
-                                      key={option}
+                                      key={option.value}
                                       className="flex items-center"
                                     >
                                       <input
-                                        id={`filter-mobile-${section.id}-${optionIdx}`}
-                                        name={`${section.id}[]`}
+                                        id={`filter-mobile-${section.name}-${optionIdx}`}
+                                        name={`${section.name}[]`}
                                         defaultValue={option.value}
                                         type="checkbox"
                                         defaultChecked={option.checked}
                                         className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                        onChange={() => {
+                                          const copyFilters = [...filters]
+                                          const updateFilter = copyFilters.map(
+                                            (filter) => {
+                                              if (filter.name == section.name) {
+                                                filter.values.forEach((hej) => {
+                                                  if (
+                                                    hej.value == option.value
+                                                  ) {
+                                                    hej.checked = !hej.checked
+                                                    return filter
+                                                  }
+                                                })
+                                              }
+                                              return filter
+                                            }
+                                          )
+                                          setFilters(updateFilter)
+                                        }}
                                       />
                                       <label
-                                        htmlFor={`filter-mobile-${section.id}-${optionIdx}`}
+                                        htmlFor={`filter-mobile-${section.name}-${optionIdx}`}
                                         className="ml-3 min-w-0 flex-1 text-gray-500"
                                       >
-                                        {option}
+                                        {option.value}
                                       </label>
                                     </div>
                                   )
@@ -455,95 +493,110 @@ export default function SearchCopy({
                   }
                 >
                   {!activeCategoryTree.children ||
-                  activeCategoryTree.children.length < 1
-                    ? null
-                    : activeCategoryTree.children.map((category: any) => (
-                        <li key={category.name}>
-                          <Link href={asPath + '/' + getSlug(category.path)}>
-                            {category.name}
-                          </Link>
-                        </li>
-                      ))}
+                  activeCategoryTree.children.length < 1 ? (
+                    <span className="font-thin text-xs">
+                      Inga underkategorier tillgängliga
+                    </span>
+                  ) : (
+                    activeCategoryTree.children.map((category: any) => (
+                      <>
+                        {category.children &&
+                        category.productCount < 1 &&
+                        category.children.length <
+                          1 ? null : !category.children ? null : (
+                          <li key={category.name}>
+                            <Link href={asPath + '/' + getSlug(category.path)}>
+                              {category.name}
+                            </Link>
+                          </li>
+                        )}
+                      </>
+                    ))
+                  )}
                 </ul>
 
-                {filters.map((section: any) => (
-                  <Disclosure
-                    as="div"
-                    key={section.name}
-                    className="border-b border-gray-200 py-6"
-                  >
-                    {({ open }) => (
-                      <>
-                        <h3 className="-my-3 flow-root">
-                          <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
-                            <span className="font-medium text-gray-900">
-                              {section.name}
-                            </span>
-                            <span className="ml-6 flex items-center">
-                              {open ? (
-                                <MinusIcon
-                                  className="h-5 w-5"
-                                  aria-hidden="true"
-                                />
-                              ) : (
-                                <PlusIcon
-                                  className="h-5 w-5"
-                                  aria-hidden="true"
-                                />
-                              )}
-                            </span>
-                          </Disclosure.Button>
-                        </h3>
-                        <Disclosure.Panel className="pt-6">
-                          <div className="space-y-4">
-                            {section.values.map(
-                              (option: any, optionIdx: number) => (
-                                <div
-                                  key={option.value}
-                                  className="flex items-center"
-                                >
-                                  <input
-                                    id={`filter-${section.id}-${optionIdx}`}
-                                    name={`${section.name}[]`}
-                                    defaultValue={option.value}
-                                    type="checkbox"
-                                    defaultChecked={option.checked}
-                                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                    onChange={() => {
-                                      const copyFilters = [...filters]
-                                      const updateFilter = copyFilters.map(
-                                        (filter) => {
-                                          if (filter.name == section.name) {
-                                            filter.values.forEach(
-                                              (hej: any) => {
+                {filters.length < 1 ? (
+                  <span className="font-thin text-xs">
+                    Inga filter tillgängliga
+                  </span>
+                ) : (
+                  filters.map((section) => (
+                    <Disclosure
+                      as="div"
+                      key={section.name}
+                      className="border-b border-gray-200 py-6"
+                    >
+                      {({ open }) => (
+                        <>
+                          <h3 className="-my-3 flow-root">
+                            <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
+                              <span className="font-medium text-gray-900">
+                                {section.name}
+                              </span>
+                              <span className="ml-6 flex items-center">
+                                {open ? (
+                                  <MinusIcon
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
+                                ) : (
+                                  <PlusIcon
+                                    className="h-5 w-5"
+                                    aria-hidden="true"
+                                  />
+                                )}
+                              </span>
+                            </Disclosure.Button>
+                          </h3>
+                          <Disclosure.Panel className="pt-6">
+                            <div className="space-y-4">
+                              {section.values.map(
+                                (option, optionIdx: number) => (
+                                  <div
+                                    key={option.value}
+                                    className="flex items-center"
+                                  >
+                                    <input
+                                      id={`filter-${section.name}-${optionIdx}`}
+                                      name={`${section.name}[]`}
+                                      defaultValue={option.value}
+                                      type="checkbox"
+                                      defaultChecked={option.checked}
+                                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                      onChange={() => {
+                                        const copyFilters = [...filters]
+                                        const updateFilter = copyFilters.map(
+                                          (filter) => {
+                                            if (filter.name == section.name) {
+                                              filter.values.forEach((hej) => {
                                                 if (hej.value == option.value) {
                                                   hej.checked = !hej.checked
                                                   return filter
                                                 }
-                                              }
-                                            )
+                                              })
+                                            }
+                                            return filter
                                           }
-                                          return filter
-                                        }
-                                      )
-                                      setFilters(updateFilter)
-                                    }}
-                                  />
-                                  <label
-                                    htmlFor={`filter-${section.id}-${optionIdx}`}
-                                    className="ml-3 text-sm text-gray-600"
-                                  >
-                                    {option.value}
-                                  </label>
-                                </div>
-                              )
-                            )}
-                          </div>
-                        </Disclosure.Panel>
-                      </>
-                    )}
-                  </Disclosure>
-                ))}
+                                        )
+                                        setFilters(updateFilter)
+                                      }}
+                                    />
+                                    <label
+                                      htmlFor={`filter-${section.name}-${optionIdx}`}
+                                      className="ml-3 text-sm text-gray-600"
+                                    >
+                                      {option.value}
+                                    </label>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          </Disclosure.Panel>
+                        </>
+                      )}
+                    </Disclosure>
+                  ))
+                )}
               </form>
               {/* Product grid */}
               {!data ? null : (
@@ -553,7 +606,6 @@ export default function SearchCopy({
                   ) : ActiveProducts.length > 0 ? (
                     ActiveProducts.map((product) => (
                       <Link key={product.id} href={'/product/' + product.slug}>
-                        {/*  <a className="group text-sm"> */}
                         <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
                           <img
                             src={product.images[0].url}
@@ -566,13 +618,13 @@ export default function SearchCopy({
                           className="mt-auto flex items-center space-x-3 pt-4 pl-2"
                         >
                           {product.options
-                            ? product.options.map((option: any) => {
+                            ? product.options.map((option) => {
                                 if (
                                   option.displayName == 'Color' ||
                                   option.displayName == 'Färg'
                                 ) {
                                   return option.values.map(
-                                    (value: any, i: number) => {
+                                    (value, i: number) => {
                                       return (
                                         <li
                                           key={i}
@@ -608,13 +660,15 @@ export default function SearchCopy({
                             ' ' +
                             product.price.currencyCode}
                         </p>
-                        {/*  </a> */}
                       </Link>
                     ))
+                  ) : !data.found ? (
+                    <span>
+                      Inga produkter finns för nuvarande på denna kategori
+                    </span>
                   ) : (
                     data.products.map((product) => (
                       <Link key={product.id} href={'/product/' + product.slug}>
-                        {/*  <a className="group text-sm"> */}
                         <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
                           <img
                             src={product.images[0].url}
@@ -627,13 +681,13 @@ export default function SearchCopy({
                           className="mt-auto flex items-center space-x-3 pt-4 pl-2"
                         >
                           {product.options
-                            ? product.options.map((option: any) => {
+                            ? product.options.map((option) => {
                                 if (
                                   option.displayName == 'Color' ||
                                   option.displayName == 'Färg'
                                 ) {
                                   return option.values.map(
-                                    (value: any, i: number) => {
+                                    (value, i: number) => {
                                       return (
                                         <li
                                           key={i}
@@ -669,7 +723,6 @@ export default function SearchCopy({
                             ' ' +
                             product.price.currencyCode}
                         </p>
-                        {/*  </a> */}
                       </Link>
                     ))
                   )}
