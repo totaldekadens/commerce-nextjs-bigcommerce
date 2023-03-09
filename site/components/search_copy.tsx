@@ -489,21 +489,25 @@ export default function SearchCopy({
                       Inga underkategorier tillgängliga
                     </span>
                   ) : (
-                    activeCategoryTree.children.map((category: any) => (
-                      <>
-                        {category.children &&
-                        category.productCount < 1 &&
-                        category.children.length <
-                          1 ? null : !category.children &&
-                          category.productCount < 1 ? null : (
-                          <li key={category.name}>
-                            <Link href={asPath + '/' + getSlug(category.path)}>
-                              {category.name}
-                            </Link>
-                          </li>
-                        )}
-                      </>
-                    ))
+                    activeCategoryTree.children.map(
+                      (category: any, i: number) => (
+                        <div key={i}>
+                          {category.children &&
+                          category.productCount < 1 &&
+                          category.children.length <
+                            1 ? null : !category.children &&
+                            category.productCount < 1 ? null : (
+                            <li key={category.name}>
+                              <Link
+                                href={asPath + '/' + getSlug(category.path)}
+                              >
+                                {category.name}
+                              </Link>
+                            </li>
+                          )}
+                        </div>
+                      )
+                    )
                   )}
                 </ul>
 

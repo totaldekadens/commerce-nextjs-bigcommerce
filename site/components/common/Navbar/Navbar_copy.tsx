@@ -114,14 +114,14 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                   <Tab.Group as="div" className="mt-2 z-100 ">
                     <div className="border-b border-gray-200">
                       <Tab.List className="-mb-px flex space-x-8 px-4">
-                        {!links
-                          ? null
-                          : links.map((category) => (
-                              <>
-                                {category.name == 'Fyndhörna' ||
+                        <>
+                          {!links
+                            ? null
+                            : links.map((category, i) =>
+                                category.name == 'Fyndhörna' ||
                                 category.name == 'Julklappstips' ? null : (
                                   <Tab
-                                    key={category.name}
+                                    key={i}
                                     className={({ selected }) =>
                                       classNames(
                                         selected
@@ -133,9 +133,9 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                                   >
                                     {category.name}
                                   </Tab>
-                                )}
-                              </>
-                            ))}
+                                )
+                              )}
+                        </>
                       </Tab.List>
                     </div>
                     <Tab.Panels as={Fragment}>
@@ -349,11 +349,11 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                       id="ettidtest"
                       style={{ paddingBottom: 2, paddingTop: 2 }}
                     >
-                      {!links
-                        ? null
-                        : links.map((category) => (
-                            <>
-                              {category.name == 'Fyndhörna' ||
+                      <>
+                        {!links
+                          ? null
+                          : links.map((category, i) =>
+                              category.name == 'Fyndhörna' ||
                               category.name == 'Julklappstips' ? null : (
                                 <Popover key={category.name} className="flex">
                                   {({ open }) => (
@@ -601,24 +601,24 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                                     </>
                                   )}
                                 </Popover>
-                              )}
-                            </>
-                          ))}
-                      {!links
-                        ? null
-                        : links?.map((category) => (
-                            <>
-                              {category.name != 'Fyndhörna' ? null : (
+                              )
+                            )}
+                      </>
+                      <>
+                        {!links
+                          ? null
+                          : links?.map((category, i) =>
+                              category.name != 'Fyndhörna' ? null : (
                                 <Link
+                                  key={i}
                                   href={'/search' + category.path}
                                   className="flex items-center text-sm font-medium text-gray-700 hover:text-gray-800"
                                 >
                                   {category.name}
                                 </Link>
-                              )}
-                            </>
-                          ))}
-
+                              )
+                            )}
+                      </>
                       {/*  {navigation.pages.map((page) => (
                         <a
                           key={page.name}
