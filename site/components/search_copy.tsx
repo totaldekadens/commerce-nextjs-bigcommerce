@@ -60,8 +60,8 @@ export default function SearchCopy({
 }: SearchPropsType) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [filters, setFilters] = useState<any>([])
+  const [values, setValues] = useState<any>([])
 
-  const [checkedValues, setCheckedValues] = useState<any[]>([])
   const router = useRouter()
   const { asPath, locale } = router
   const { q, sort } = router.query
@@ -101,12 +101,14 @@ export default function SearchCopy({
   const [ActiveProducts, setActiveProducts] = useState<Product[]>(
     data ? data.products : []
   )
-  console.log(ActiveProducts)
+
   // Påbörjat jämföra produkterna med filterlistan
   useEffect(() => {
+    let allValues: any[] = []
     if (data) {
       // Creates a list of strings with checked options/values
-      let allValues: any[] = []
+
+      //let valuesCopy = [...values]
       filters.forEach((option: any) => {
         return option.values.forEach((value: any) => {
           if (value.checked) {
@@ -117,29 +119,43 @@ export default function SearchCopy({
 
       // If an option is checked, continue
       const currentProducts: Product[] = []
-      if (allValues && allValues.length > 0) {
-        data.products.forEach((product) => {
-          if (product.options && product.options.length > 0) {
-            product.options.forEach((option) => {
+      const currentProducts2: Product[] = []
+
+      data.products.forEach((product) => {
+        if (product.options && product.options.length > 0) {
+          product.options.forEach((option) => {
+            console.log(allValues)
+            if (allValues.length > 0) {
               allValues.forEach((filter: any) => {
                 if (filter.name == option.displayName) {
                   option.values.forEach((value) => {
                     if (value.label == filter.value) {
-                      const foundProduct = currentProducts.find(
-                        (item: Product) => item.id == product.id
+                      console.log(allValues.length)
+                      /*  const foundProduct = currentProducts.find(
+                          (item: Product) => item.id == product.id
+                        ) */
+                      currentProducts2.push(product)
+
+                      const getMatchedProduct = currentProducts2.filter(
+                        (item) => item.id == product.id
                       )
-                      if (!foundProduct) {
+                      if (getMatchedProduct.length == allValues.length) {
                         currentProducts.push(product)
                       }
+
+                      setValues(allValues)
                     }
                   })
                 }
               })
-            })
-          }
-        })
-      }
-      console.log(currentProducts)
+            } else {
+              setValues([])
+            }
+          })
+        }
+      })
+
+      //console.log(currentProducts)
       setActiveProducts(currentProducts)
     }
   }, [data, filters])
@@ -532,133 +548,131 @@ export default function SearchCopy({
               {/* Product grid */}
               {!data ? null : (
                 <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:col-span-3 lg:gap-x-8">
-                  {ActiveProducts.length > 0
-                    ? ActiveProducts.map((product) => (
-                        <Link
-                          key={product.id}
-                          href={'/product/' + product.slug}
+                  {ActiveProducts.length < 1 && values.length > 0 ? (
+                    <span>Inga produkter matchade din filtrering</span>
+                  ) : ActiveProducts.length > 0 ? (
+                    ActiveProducts.map((product) => (
+                      <Link key={product.id} href={'/product/' + product.slug}>
+                        {/*  <a className="group text-sm"> */}
+                        <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+                          <img
+                            src={product.images[0].url}
+                            alt={product.images[0].alt}
+                            className="h-full w-full object-cover object-center"
+                          />
+                        </div>
+                        <ul
+                          role="list"
+                          className="mt-auto flex items-center space-x-3 pt-4 pl-2"
                         >
-                          {/*  <a className="group text-sm"> */}
-                          <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-                            <img
-                              src={product.images[0].url}
-                              alt={product.images[0].alt}
-                              className="h-full w-full object-cover object-center"
-                            />
-                          </div>
-                          <ul
-                            role="list"
-                            className="mt-auto flex items-center space-x-3 pt-4 pl-2"
-                          >
-                            {product.options
-                              ? product.options.map((option: any) => {
-                                  if (
-                                    option.displayName == 'Color' ||
-                                    option.displayName == 'Färg'
-                                  ) {
-                                    return option.values.map(
-                                      (value: any, i: number) => {
-                                        return (
-                                          <li
-                                            key={i}
-                                            className="h-4 w-4 rounded-full border border-black border-opacity-10"
-                                            style={{
-                                              backgroundColor: value.hexColors
-                                                ? value.hexColors[0]
-                                                : getEnglishColor(value.label),
-                                            }}
-                                          >
-                                            <span className="sr-only">
-                                              {' '}
-                                              {value.hexColors
-                                                ? value.hexColors[0]
-                                                : value.label}{' '}
-                                            </span>
-                                          </li>
-                                        )
-                                      }
-                                    )
-                                  }
-                                })
-                              : null}
-                          </ul>
-                          <h3 className="mt-4 font-medium text-gray-900  pl-2">
-                            {product.name}
-                          </h3>
-                          <p className="italic text-gray-500  pl-2">
-                            {/* {product.availability} */}
-                          </p>
-                          <p className="mt-2 font-medium text-gray-900  pl-2">
-                            {product.price.value +
-                              ' ' +
-                              product.price.currencyCode}
-                          </p>
-                          {/*  </a> */}
-                        </Link>
-                      ))
-                    : data.products.map((product) => (
-                        <Link
-                          key={product.id}
-                          href={'/product/' + product.slug}
+                          {product.options
+                            ? product.options.map((option: any) => {
+                                if (
+                                  option.displayName == 'Color' ||
+                                  option.displayName == 'Färg'
+                                ) {
+                                  return option.values.map(
+                                    (value: any, i: number) => {
+                                      return (
+                                        <li
+                                          key={i}
+                                          className="h-4 w-4 rounded-full border border-black border-opacity-10"
+                                          style={{
+                                            backgroundColor: value.hexColors
+                                              ? value.hexColors[0]
+                                              : getEnglishColor(value.label),
+                                          }}
+                                        >
+                                          <span className="sr-only">
+                                            {' '}
+                                            {value.hexColors
+                                              ? value.hexColors[0]
+                                              : value.label}{' '}
+                                          </span>
+                                        </li>
+                                      )
+                                    }
+                                  )
+                                }
+                              })
+                            : null}
+                        </ul>
+                        <h3 className="mt-4 font-medium text-gray-900  pl-2">
+                          {product.name}
+                        </h3>
+                        <p className="italic text-gray-500  pl-2">
+                          {/* {product.availability} */}
+                        </p>
+                        <p className="mt-2 font-medium text-gray-900  pl-2">
+                          {product.price.value +
+                            ' ' +
+                            product.price.currencyCode}
+                        </p>
+                        {/*  </a> */}
+                      </Link>
+                    ))
+                  ) : (
+                    data.products.map((product) => (
+                      <Link key={product.id} href={'/product/' + product.slug}>
+                        {/*  <a className="group text-sm"> */}
+                        <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+                          <img
+                            src={product.images[0].url}
+                            alt={product.images[0].alt}
+                            className="h-full w-full object-cover object-center"
+                          />
+                        </div>
+                        <ul
+                          role="list"
+                          className="mt-auto flex items-center space-x-3 pt-4 pl-2"
                         >
-                          {/*  <a className="group text-sm"> */}
-                          <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-                            <img
-                              src={product.images[0].url}
-                              alt={product.images[0].alt}
-                              className="h-full w-full object-cover object-center"
-                            />
-                          </div>
-                          <ul
-                            role="list"
-                            className="mt-auto flex items-center space-x-3 pt-4 pl-2"
-                          >
-                            {product.options
-                              ? product.options.map((option: any) => {
-                                  if (
-                                    option.displayName == 'Color' ||
-                                    option.displayName == 'Färg'
-                                  ) {
-                                    return option.values.map(
-                                      (value: any, i: number) => {
-                                        return (
-                                          <li
-                                            key={i}
-                                            className="h-4 w-4 rounded-full border border-black border-opacity-10"
-                                            style={{
-                                              backgroundColor: value.hexColors
-                                                ? value.hexColors[0]
-                                                : getEnglishColor(value.label),
-                                            }}
-                                          >
-                                            <span className="sr-only">
-                                              {' '}
-                                              {value.hexColors
-                                                ? value.hexColors[0]
-                                                : value.label}{' '}
-                                            </span>
-                                          </li>
-                                        )
-                                      }
-                                    )
-                                  }
-                                })
-                              : null}
-                          </ul>
-                          <h3 className="mt-4 font-medium text-gray-900  pl-2">
-                            {product.name}
-                          </h3>
-                          <p className="italic text-gray-500  pl-2">
-                            {/* {product.availability} */}
-                          </p>
-                          <p className="mt-2 font-medium text-gray-900  pl-2">
-                            {product.price.value +
-                              ' ' +
-                              product.price.currencyCode}
-                          </p>
-                          {/*  </a> */}
-                        </Link>
-                      ))}
+                          {product.options
+                            ? product.options.map((option: any) => {
+                                if (
+                                  option.displayName == 'Color' ||
+                                  option.displayName == 'Färg'
+                                ) {
+                                  return option.values.map(
+                                    (value: any, i: number) => {
+                                      return (
+                                        <li
+                                          key={i}
+                                          className="h-4 w-4 rounded-full border border-black border-opacity-10"
+                                          style={{
+                                            backgroundColor: value.hexColors
+                                              ? value.hexColors[0]
+                                              : getEnglishColor(value.label),
+                                          }}
+                                        >
+                                          <span className="sr-only">
+                                            {' '}
+                                            {value.hexColors
+                                              ? value.hexColors[0]
+                                              : value.label}{' '}
+                                          </span>
+                                        </li>
+                                      )
+                                    }
+                                  )
+                                }
+                              })
+                            : null}
+                        </ul>
+                        <h3 className="mt-4 font-medium text-gray-900  pl-2">
+                          {product.name}
+                        </h3>
+                        <p className="italic text-gray-500  pl-2">
+                          {/* {product.availability} */}
+                        </p>
+                        <p className="mt-2 font-medium text-gray-900  pl-2">
+                          {product.price.value +
+                            ' ' +
+                            product.price.currencyCode}
+                        </p>
+                        {/*  </a> */}
+                      </Link>
+                    ))
+                  )}
                 </div>
               )}
             </div>
