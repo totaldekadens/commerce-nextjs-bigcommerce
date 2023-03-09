@@ -21,6 +21,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head />
+
       <HideProvider>
         <ManagedUIContext>
           <Layout pageProps={pageProps}>

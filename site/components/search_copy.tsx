@@ -13,7 +13,7 @@ import { Container, Skeleton } from '@components/ui'
 
 import useSearch from '@framework/product/use-search'
 import rangeMap from '@lib/range-map'
-
+import { Checkbox } from '@mantine/core'
 const SORT = {
   'trending-desc': 'Trending',
   'latest-desc': 'Latest arrivals',
@@ -60,6 +60,8 @@ export default function SearchCopy({
 }: SearchPropsType) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [filters, setFilters] = useState<any>([])
+
+  const [checkedValues, setCheckedValues] = useState<any[]>([])
   const router = useRouter()
   const { asPath, locale } = router
   const { q, sort } = router.query
@@ -96,23 +98,82 @@ export default function SearchCopy({
     locale,
   })
 
+  const [ActiveProducts, setActiveProducts] = useState<Product[]>(
+    data ? data.products : []
+  )
+  console.log(ActiveProducts)
+  // Påbörjat jämföra produkterna med filterlistan
+  useEffect(() => {
+    if (data) {
+      // Creates a list of strings with checked options/values
+      let allValues: any[] = []
+      filters.forEach((option: any) => {
+        return option.values.forEach((value: any) => {
+          if (value.checked) {
+            allValues.push({ name: option.name, value: value.value })
+          }
+        })
+      })
+      //setCheckedValues(allValues)
+      //console.log(allValues)
+      // If an option is checked, continue
+      const currentProducts: Product[] = []
+      if (allValues && allValues.length > 0) {
+        data.products.forEach((product) => {
+          if (product.options && product.options.length > 0) {
+            //console.log(product.options)
+            product.options.forEach((option) => {
+              allValues.forEach((filter: any) => {
+                if (filter.name == option.displayName) {
+                  //console.log(filter)
+                  //console.log(option)
+                  option.values.forEach((value) => {
+                    //console.log(value.label)
+                    //console.log(filter.value)
+                    if (value.label == filter.value) {
+                      //console.log(product)
+                      const foundProduct = currentProducts.find(
+                        (item: Product) => item.id == product.id
+                      )
+                      if (!foundProduct) {
+                        currentProducts.push(product)
+                      }
+                    }
+                  })
+                  //console.log(filter.name)
+                  //console.log(option)
+                  //option.values.filter
+                  //console.log('TJA')
+                }
+              })
+            })
+          }
+        })
+      }
+      console.log(currentProducts)
+      setActiveProducts(currentProducts)
+    }
+  }, [data, filters])
+  //console.log(filters)
+  console.log()
   /* Breadbrumbs */
-
+  // Splits the paths and creates an array
   const splittedPaths = asPath.split('/')
-
+  // Gets the category tree of the last slug. Todo: Need to filter out category tree on the first slug to avoid get duplicated pathnames from another category branch
   const categoryObjectsFromPath = splittedPaths.map((path) => {
     return getActiveCategoryTree(categoryTree, path)
   })
-  // Filter out empty objects
+  // Filter out empty objects in array
   const newArray = categoryObjectsFromPath.filter(
     (value) => Object.keys(value).length !== 0
   )
-
+  // Adds the rigth paths to all categories in the url
   const list: any[] = []
   newArray.forEach((category) => {
     const foundIndex = splittedPaths.findIndex(
       (path) => path == getSlug(category.path)
     )
+    // Creates full path to category in category tree and pushes it to a list
     const newPaths = splittedPaths.slice(0, foundIndex + 1)
     const copy = { ...category }
     copy.path = newPaths.join('/')
@@ -120,7 +181,7 @@ export default function SearchCopy({
     list.push(category)
   })
 
-  // Filtering all options of displayed products
+  // Creates a list of all options and values (with no duplicates) of displayed products
   useEffect(() => {
     if (data) {
       const names: any[] = []
@@ -140,10 +201,13 @@ export default function SearchCopy({
               (item) => item.name == option.displayName
             )
             const findValue = findDisplayName.values.find(
-              (hej: any) => hej == value.label
+              (hej: any) => hej.value == value.label
             )
             if (!findValue) {
-              findDisplayName.values.push(value.label)
+              findDisplayName.values.push({
+                value: value.label,
+                checked: false,
+              })
             }
           })
         })
@@ -151,6 +215,8 @@ export default function SearchCopy({
       setFilters(names)
     }
   }, [data])
+
+  //console.log(filters)
 
   if (error) {
     return <ErrorMessage error={error} />
@@ -430,20 +496,42 @@ export default function SearchCopy({
                           <div className="space-y-4">
                             {section.values.map(
                               (option: any, optionIdx: number) => (
-                                <div key={option} className="flex items-center">
+                                <div
+                                  key={option.value}
+                                  className="flex items-center"
+                                >
                                   <input
                                     id={`filter-${section.id}-${optionIdx}`}
-                                    name={`${section.id}[]`}
-                                    defaultValue={option}
+                                    name={`${section.name}[]`}
+                                    defaultValue={option.value}
                                     type="checkbox"
                                     defaultChecked={option.checked}
                                     className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                    onChange={() => {
+                                      const copyFilters = [...filters]
+                                      const updateFilter = copyFilters.map(
+                                        (filter) => {
+                                          if (filter.name == section.name) {
+                                            filter.values.forEach(
+                                              (hej: any) => {
+                                                if (hej.value == option.value) {
+                                                  hej.checked = !hej.checked
+                                                  return filter
+                                                }
+                                              }
+                                            )
+                                          }
+                                          return filter
+                                        }
+                                      )
+                                      setFilters(updateFilter)
+                                    }}
                                   />
                                   <label
                                     htmlFor={`filter-${section.id}-${optionIdx}`}
                                     className="ml-3 text-sm text-gray-600"
                                   >
-                                    {option}
+                                    {option.value}
                                   </label>
                                 </div>
                               )
@@ -458,64 +546,133 @@ export default function SearchCopy({
               {/* Product grid */}
               {!data ? null : (
                 <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:col-span-3 lg:gap-x-8">
-                  {data.products.map((product) => (
-                    <Link key={product.id} href={'/product/' + product.slug}>
-                      {/*  <a className="group text-sm"> */}
-                      <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-                        <img
-                          src={product.images[0].url}
-                          alt={product.images[0].alt}
-                          className="h-full w-full object-cover object-center"
-                        />
-                      </div>
-                      <ul
-                        role="list"
-                        className="mt-auto flex items-center space-x-3 pt-4 pl-2"
-                      >
-                        {product.options
-                          ? product.options.map((option: any) => {
-                              if (
-                                option.displayName == 'Color' ||
-                                option.displayName == 'Färg'
-                              ) {
-                                return option.values.map(
-                                  (value: any, i: number) => {
-                                    return (
-                                      <li
-                                        key={i}
-                                        className="h-4 w-4 rounded-full border border-black border-opacity-10"
-                                        style={{
-                                          backgroundColor: value.hexColors
-                                            ? value.hexColors[0]
-                                            : getEnglishColor(value.label),
-                                        }}
-                                      >
-                                        <span className="sr-only">
-                                          {' '}
-                                          {value.hexColors
-                                            ? value.hexColors[0]
-                                            : value.label}{' '}
-                                        </span>
-                                      </li>
+                  {ActiveProducts.length > 0
+                    ? ActiveProducts.map((product) => (
+                        <Link
+                          key={product.id}
+                          href={'/product/' + product.slug}
+                        >
+                          {/*  <a className="group text-sm"> */}
+                          <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+                            <img
+                              src={product.images[0].url}
+                              alt={product.images[0].alt}
+                              className="h-full w-full object-cover object-center"
+                            />
+                          </div>
+                          <ul
+                            role="list"
+                            className="mt-auto flex items-center space-x-3 pt-4 pl-2"
+                          >
+                            {product.options
+                              ? product.options.map((option: any) => {
+                                  if (
+                                    option.displayName == 'Color' ||
+                                    option.displayName == 'Färg'
+                                  ) {
+                                    return option.values.map(
+                                      (value: any, i: number) => {
+                                        return (
+                                          <li
+                                            key={i}
+                                            className="h-4 w-4 rounded-full border border-black border-opacity-10"
+                                            style={{
+                                              backgroundColor: value.hexColors
+                                                ? value.hexColors[0]
+                                                : getEnglishColor(value.label),
+                                            }}
+                                          >
+                                            <span className="sr-only">
+                                              {' '}
+                                              {value.hexColors
+                                                ? value.hexColors[0]
+                                                : value.label}{' '}
+                                            </span>
+                                          </li>
+                                        )
+                                      }
                                     )
                                   }
-                                )
-                              }
-                            })
-                          : null}
-                      </ul>
-                      <h3 className="mt-4 font-medium text-gray-900  pl-2">
-                        {product.name}
-                      </h3>
-                      <p className="italic text-gray-500  pl-2">
-                        {/* {product.availability} */}
-                      </p>
-                      <p className="mt-2 font-medium text-gray-900  pl-2">
-                        {product.price.value + ' ' + product.price.currencyCode}
-                      </p>
-                      {/*  </a> */}
-                    </Link>
-                  ))}
+                                })
+                              : null}
+                          </ul>
+                          <h3 className="mt-4 font-medium text-gray-900  pl-2">
+                            {product.name}
+                          </h3>
+                          <p className="italic text-gray-500  pl-2">
+                            {/* {product.availability} */}
+                          </p>
+                          <p className="mt-2 font-medium text-gray-900  pl-2">
+                            {product.price.value +
+                              ' ' +
+                              product.price.currencyCode}
+                          </p>
+                          {/*  </a> */}
+                        </Link>
+                      ))
+                    : data.products.map((product) => (
+                        <Link
+                          key={product.id}
+                          href={'/product/' + product.slug}
+                        >
+                          {/*  <a className="group text-sm"> */}
+                          <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+                            <img
+                              src={product.images[0].url}
+                              alt={product.images[0].alt}
+                              className="h-full w-full object-cover object-center"
+                            />
+                          </div>
+                          <ul
+                            role="list"
+                            className="mt-auto flex items-center space-x-3 pt-4 pl-2"
+                          >
+                            {product.options
+                              ? product.options.map((option: any) => {
+                                  if (
+                                    option.displayName == 'Color' ||
+                                    option.displayName == 'Färg'
+                                  ) {
+                                    return option.values.map(
+                                      (value: any, i: number) => {
+                                        return (
+                                          <li
+                                            key={i}
+                                            className="h-4 w-4 rounded-full border border-black border-opacity-10"
+                                            style={{
+                                              backgroundColor: value.hexColors
+                                                ? value.hexColors[0]
+                                                : getEnglishColor(value.label),
+                                            }}
+                                          >
+                                            <span className="sr-only">
+                                              {' '}
+                                              {value.hexColors
+                                                ? value.hexColors[0]
+                                                : value.label}{' '}
+                                            </span>
+                                          </li>
+                                        )
+                                      }
+                                    )
+                                  }
+                                })
+                              : null}
+                          </ul>
+                          <h3 className="mt-4 font-medium text-gray-900  pl-2">
+                            {product.name}
+                          </h3>
+                          <p className="italic text-gray-500  pl-2">
+                            {/* {product.availability} */}
+                          </p>
+                          <p className="mt-2 font-medium text-gray-900  pl-2">
+                            {product.price.value +
+                              ' ' +
+                              product.price.currencyCode}
+                          </p>
+                          {/*  </a> */}
+                        </Link>
+                      ))}
                 </div>
               )}
             </div>

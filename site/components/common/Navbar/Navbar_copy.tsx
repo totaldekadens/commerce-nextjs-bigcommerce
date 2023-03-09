@@ -55,7 +55,7 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
   ]
 
   //const getFixedLinks = links?.map()
-  console.log(links)
+  //console.log(links)
 
   return (
     <>
