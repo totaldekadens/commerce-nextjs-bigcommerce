@@ -234,7 +234,10 @@ export default function SearchCopy({
   if (error) {
     return <ErrorMessage error={error} />
   }
-
+  console.log(filters)
+  /*   if (data && !data.found) {
+    setFilters([])
+  } 
   /*   const handleClick = (event: any, filter: string) => {
     if (filter !== activeFilter) {
       setToggleFilter(true)
@@ -503,7 +506,8 @@ export default function SearchCopy({
                         {category.children &&
                         category.productCount < 1 &&
                         category.children.length <
-                          1 ? null : !category.children ? null : (
+                          1 ? null : !category.children &&
+                          category.productCount < 1 ? null : (
                           <li key={category.name}>
                             <Link href={asPath + '/' + getSlug(category.path)}>
                               {category.name}
