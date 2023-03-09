@@ -13,7 +13,7 @@ import { Container, Skeleton } from '@components/ui'
 
 import useSearch from '@framework/product/use-search'
 import rangeMap from '@lib/range-map'
-import { Checkbox } from '@mantine/core'
+
 const SORT = {
   'trending-desc': 'Trending',
   'latest-desc': 'Latest arrivals',
@@ -114,24 +114,17 @@ export default function SearchCopy({
           }
         })
       })
-      //setCheckedValues(allValues)
-      //console.log(allValues)
+
       // If an option is checked, continue
       const currentProducts: Product[] = []
       if (allValues && allValues.length > 0) {
         data.products.forEach((product) => {
           if (product.options && product.options.length > 0) {
-            //console.log(product.options)
             product.options.forEach((option) => {
               allValues.forEach((filter: any) => {
                 if (filter.name == option.displayName) {
-                  //console.log(filter)
-                  //console.log(option)
                   option.values.forEach((value) => {
-                    //console.log(value.label)
-                    //console.log(filter.value)
                     if (value.label == filter.value) {
-                      //console.log(product)
                       const foundProduct = currentProducts.find(
                         (item: Product) => item.id == product.id
                       )
@@ -140,10 +133,6 @@ export default function SearchCopy({
                       }
                     }
                   })
-                  //console.log(filter.name)
-                  //console.log(option)
-                  //option.values.filter
-                  //console.log('TJA')
                 }
               })
             })
@@ -154,8 +143,7 @@ export default function SearchCopy({
       setActiveProducts(currentProducts)
     }
   }, [data, filters])
-  //console.log(filters)
-  console.log()
+
   /* Breadbrumbs */
   // Splits the paths and creates an array
   const splittedPaths = asPath.split('/')
@@ -215,8 +203,6 @@ export default function SearchCopy({
       setFilters(names)
     }
   }, [data])
-
-  //console.log(filters)
 
   if (error) {
     return <ErrorMessage error={error} />
