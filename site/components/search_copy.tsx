@@ -115,13 +115,9 @@ export default function SearchCopy({
   const [ActiveProducts, setActiveProducts] = useState<Product[]>(
     data ? data.products : []
   )
-
-  interface OptionValue {
-    name: string
-    value: string
-  }
+  // Updates Productlist with filtered products based on whats checked
   useEffect(() => {
-    let allValues: OptionValue[] = []
+    let allValues: Value[] = []
     if (data && data.found) {
       // Creates a list of strings with checked options/values
       filters.forEach((option) => {
@@ -131,15 +127,12 @@ export default function SearchCopy({
           }
         })
       })
-
-      // If an option is checked, continue
       const currentProducts: Product[] = []
       const currentProducts2: Product[] = []
 
       data.products.forEach((product) => {
         if (product.options && product.options.length > 0) {
           product.options.forEach((option) => {
-            console.log(allValues)
             if (allValues.length > 0) {
               allValues.forEach((filter) => {
                 if (filter.name == option.displayName) {
@@ -163,8 +156,6 @@ export default function SearchCopy({
           })
         }
       })
-
-      //console.log(currentProducts)
       setActiveProducts(currentProducts)
     }
   }, [data, filters])
@@ -193,7 +184,7 @@ export default function SearchCopy({
     category = copy
     list.push(category)
   })
-  console.log(activeCategory)
+
   // Creates a list of all options and values (with no duplicates) of displayed products
   useEffect(() => {
     if (data && data.found) {
@@ -234,10 +225,7 @@ export default function SearchCopy({
   if (error) {
     return <ErrorMessage error={error} />
   }
-  console.log(filters)
-  /*   if (data && !data.found) {
-    setFilters([])
-  } 
+
   /*   const handleClick = (event: any, filter: string) => {
     if (filter !== activeFilter) {
       setToggleFilter(true)
@@ -246,7 +234,7 @@ export default function SearchCopy({
     }
     setActiveFilter(filter)
   } */
-  console.log(data)
+
   return (
     <div className="bg-white">
       <div>
