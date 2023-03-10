@@ -36,6 +36,7 @@ export async function getStaticProps({
   const { data } = await jagarlivApolloClient.query({
     query: getCategoryTreeQuery,
   })
+  console.log(data)
   const hej = normalizeCategoryTree(data.site.categoryTree)
 
   return {

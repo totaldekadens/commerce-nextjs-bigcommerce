@@ -83,7 +83,7 @@ export default function SearchCopy({
   // in the same way of products, it's better to ignore the search input if one
   // of those is selected
   const query = filterQuery({ sort })
-
+  console.log(categoryTree)
   const { pathname, category, brand } = useSearchMeta(asPath)
 
   // Gets the last slug in path
@@ -101,7 +101,8 @@ export default function SearchCopy({
     categoryTree,
     activeCategorySlug
   )
-
+  console.log(activeCategorySlug)
+  console.log(activeCategoryTree)
   const activeBrand = brands.find((b: Brand) => b.slug === brand)
 
   const { data, error } = useSearch({
@@ -111,7 +112,7 @@ export default function SearchCopy({
     sort: typeof sort === 'string' ? sort : '',
     locale,
   })
-
+  console.log(activeCategory)
   const [ActiveProducts, setActiveProducts] = useState<Product[]>(
     data ? data.products : []
   )
@@ -165,23 +166,27 @@ export default function SearchCopy({
   const splittedPaths = asPath.split('/')
   // Gets the category tree of the last slug. Todo: Need to filter out category tree on the first slug to avoid get duplicated pathnames from another category branch
   const categoryObjectsFromPath = splittedPaths.map((path) => {
+    //console.log(path)
     return getActiveCategoryTree(categoryTree, path)
   })
+  //console.log(categoryObjectsFromPath)
   // Filter out empty objects in array
   const newArray = categoryObjectsFromPath.filter(
     (value) => Object.keys(value).length !== 0
   )
+  console.log(newArray)
   // Adds the rigth paths to all categories in the url
   const list: any[] = []
   newArray.forEach((category) => {
     const foundIndex = splittedPaths.findIndex(
       (path) => path == getSlug(category.path)
     )
+    console.log(category)
     // Creates full path to category in category tree and pushes it to a list
-    const newPaths = splittedPaths.slice(0, foundIndex + 1)
-    const copy = { ...category }
-    copy.path = newPaths.join('/')
-    category = copy
+    //const newPaths = splittedPaths.slice(0, foundIndex + 1)
+    //const copy = { ...category }
+    //copy.path = newPaths.join('/')
+    //category = copy
     list.push(category)
   })
 
@@ -234,7 +239,7 @@ export default function SearchCopy({
     }
     setActiveFilter(filter)
   } */
-
+  console.log(list)
   return (
     <div className="bg-white">
       <div>
@@ -299,7 +304,7 @@ export default function SearchCopy({
                             key={category.name}
                             onClick={() => setMobileFiltersOpen(false)}
                           >
-                            <Link href={asPath + '/' + getSlug(category.path)}>
+                            <Link href={'/search' + category.path}>
                               <div className="block px-2 py-3">
                                 {category.name}
                               </div>
@@ -498,9 +503,7 @@ export default function SearchCopy({
                             1 ? null : !category.children &&
                             category.productCount < 1 ? null : (
                             <li key={category.name}>
-                              <Link
-                                href={asPath + '/' + getSlug(category.path)}
-                              >
+                              <Link href={'/search' + category.path}>
                                 {category.name}
                               </Link>
                             </li>

@@ -7,6 +7,7 @@ interface Props {
 }
 
 const Breadcrumbs: FC<Props> = ({ list }) => {
+  console.log(list)
   return (
     <nav className="flex" aria-label="Breadcrumb">
       <ol role="list" className="flex items-center space-x-4">
@@ -23,7 +24,7 @@ const Breadcrumbs: FC<Props> = ({ list }) => {
             <div className="flex items-center">
               {i == 0 ? null : (
                 <svg
-                  className="h-5 w-5 flex-shrink-0 text-gray-300"
+                  className="h-5 w-3 flex-shrink-0 text-gray-300 sm:w-5"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                   aria-hidden="true"
@@ -33,11 +34,11 @@ const Breadcrumbs: FC<Props> = ({ list }) => {
               )}
 
               <Link
-                href={page.path}
+                href={'/search' + page.path}
                 className={
                   i == 0
                     ? 'text-xs font-medium text-gray-500 hover:text-gray-700 '
-                    : 'ml-4 text-xs font-medium text-gray-500 hover:text-gray-700'
+                    : 'ml-2 text-xs font-medium text-gray-500 hover:text-gray-700 sm:ml-4'
                 }
                 aria-current={page.current ? 'page' : undefined}
               >

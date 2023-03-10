@@ -167,7 +167,13 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                                               onClick={() => setOpen(false)}
                                             />
                                           </div>
-                                          <Link href={'/search' + item.path}>
+                                          <Link
+                                            href={
+                                              '/search' +
+                                              /*  getSlug(category.path) + */
+                                              item.path
+                                            }
+                                          >
                                             <div
                                               className="mt-6 block font-medium text-gray-900"
                                               onClick={() => setOpen(false)}
@@ -416,10 +422,11 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                                                             </div>
                                                             <Link
                                                               href={
-                                                                '/search/' +
-                                                                getSlug(
-                                                                  item.path
-                                                                )
+                                                                '/search' +
+                                                                /*   getSlug(
+                                                                  category.path
+                                                                ) + */
+                                                                item.path
                                                               }
                                                             >
                                                               <Popover.Button
@@ -483,14 +490,14 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                                                                           >
                                                                             <Link
                                                                               href={
-                                                                                '/search/' +
-                                                                                getSlug(
+                                                                                '/search' +
+                                                                                /*   getSlug(
                                                                                   category.path
                                                                                 ) +
-                                                                                '/' +
-                                                                                getSlug(
-                                                                                  section.path
-                                                                                )
+                                                                                '/' + */
+                                                                                /*  getSlug( */
+                                                                                section.path
+                                                                                /*   ) */
                                                                               }
                                                                             >
                                                                               <Popover.Button
@@ -516,74 +523,85 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                                                                               aria-labelledby={`${section.name}-heading`}
                                                                               className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
                                                                             >
-                                                                              {section
-                                                                                .children
-                                                                                .length <
-                                                                                1 &&
-                                                                              section.productCount <
-                                                                                1
-                                                                                ? null
-                                                                                : section.children
-                                                                                    .slice(
-                                                                                      0,
-                                                                                      8
-                                                                                    )
-                                                                                    .map(
-                                                                                      (
-                                                                                        item
-                                                                                      ) => (
-                                                                                        <li
-                                                                                          key={
-                                                                                            item.name
-                                                                                          }
-                                                                                          className="flex"
-                                                                                          onClick={() =>
-                                                                                            setOpen(
-                                                                                              false
-                                                                                            )
-                                                                                          }
-                                                                                        >
-                                                                                          <Link
-                                                                                            href={
-                                                                                              '/search/' +
-                                                                                              getSlug(
-                                                                                                category.path
-                                                                                              ) +
-                                                                                              '/' +
-                                                                                              getSlug(
-                                                                                                section.path
-                                                                                              ) +
-                                                                                              '/' +
-                                                                                              getSlug(
-                                                                                                item.path
-                                                                                              )
-                                                                                            }
-                                                                                          >
-                                                                                            <Popover.Button
-                                                                                              className={classNames(
-                                                                                                open
-                                                                                                  ? 'test-start'
-                                                                                                  : '',
-                                                                                                'duration-200 ease-out'
-                                                                                              )}
-                                                                                            >
-                                                                                              <div
-                                                                                                className="hover:text-gray-800 text-start"
+                                                                              <>
+                                                                                {!section.children ||
+                                                                                section
+                                                                                  .children
+                                                                                  .length <
+                                                                                  1
+                                                                                  ? null
+                                                                                  : section.children
+                                                                                      .slice(
+                                                                                        0,
+                                                                                        8
+                                                                                      )
+                                                                                      .map(
+                                                                                        (
+                                                                                          item
+                                                                                        ) => (
+                                                                                          <>
+                                                                                            {item.children &&
+                                                                                            item.productCount <
+                                                                                              1 &&
+                                                                                            item
+                                                                                              .children
+                                                                                              .length <
+                                                                                              1 ? null : (
+                                                                                              <li
+                                                                                                key={
+                                                                                                  item.name
+                                                                                                }
+                                                                                                className="flex"
                                                                                                 onClick={() =>
                                                                                                   setOpen(
                                                                                                     false
                                                                                                   )
                                                                                                 }
                                                                                               >
-                                                                                                {
-                                                                                                  item.name
-                                                                                                }
-                                                                                              </div>
-                                                                                            </Popover.Button>
-                                                                                          </Link>
-                                                                                        </li>
-                                                                                      )
-                                                                                    )}
+                                                                                                <Link
+                                                                                                  href={
+                                                                                                    '/search' +
+                                                                                                    /*  getSlug(
+                                                                                                      category.path
+                                                                                                    ) +
+                                                                                                    '/' +
+                                                                                                    getSlug(
+                                                                                                      section.path
+                                                                                                    ) +
+                                                                                                    '/' + */
+                                                                                                    /* getSlug( */
+                                                                                                    item.path
+                                                                                                    /* ) */
+                                                                                                  }
+                                                                                                >
+                                                                                                  <Popover.Button
+                                                                                                    className={classNames(
+                                                                                                      open
+                                                                                                        ? 'test-start'
+                                                                                                        : '',
+                                                                                                      'duration-200 ease-out'
+                                                                                                    )}
+                                                                                                  >
+                                                                                                    <div
+                                                                                                      className="hover:text-gray-800 text-start"
+                                                                                                      onClick={() =>
+                                                                                                        setOpen(
+                                                                                                          false
+                                                                                                        )
+                                                                                                      }
+                                                                                                    >
+                                                                                                      {
+                                                                                                        item.name
+                                                                                                      }
+                                                                                                    </div>
+                                                                                                  </Popover.Button>
+                                                                                                </Link>
+                                                                                              </li>
+                                                                                            )}
+                                                                                          </>
+                                                                                        )
+                                                                                      )}
+                                                                              </>
                                                                             </ul>
                                                                           </div>
                                                                         </>
