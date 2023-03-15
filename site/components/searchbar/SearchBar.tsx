@@ -108,8 +108,8 @@ const SearchBar: FC<Props> = ({
 
               {/* SEARCH RESULTS STARTS HERE */}
 
-              <div className="flex flex-col lg:flex-row w-full h-full p-4 ">
-                <div className="flex-col items-center bg-white h-3/6 w-1/6 p-4">
+              <div className="flex flex-col lg:flex-row w-full h-full p-4 flex-wrap">
+                <div className="flex-col items-center bg-white h-3/6 w-full p-4 sm:w-3/6 md:w-2/6 lg:w-1/6">
                   {categories.length == 0 ? null : (
                     <p className="text-left font-medium text-lg">Kategorier</p>
                   )}
@@ -128,7 +128,7 @@ const SearchBar: FC<Props> = ({
                     })}
                 </div>
 
-                <div className="bg-white-600 lg:w-5/6 flex  pb-16 flex-wrap">
+                <div className="bg-white-600 flex pb-16 flex-wrap sm:flex-nowrap lg:w-5/6 ">
                   {filteredProducts &&
                     filteredProducts.map((product, i) => {
                       return (

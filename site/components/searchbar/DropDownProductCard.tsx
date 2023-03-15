@@ -17,7 +17,7 @@ const DropDownProductCard: FC<Props> = ({ product, setSearchBar }) => {
         setSearchBar(false)
       }}
     >
-      <div className="flex-col basis-1/2 lg:basis-1/5 flex items-center p-4 cursor-pointer gap-1">
+      <div className="flex-col basis-1/3 lg:basis-1/5 flex items-center p-4 cursor-pointer gap-1 ">
         <div>
           <Image
             alt="hej"
