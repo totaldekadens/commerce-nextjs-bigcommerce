@@ -47,9 +47,6 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
   const { width, height } = useWindowSize()
   const [openCart, setOpenCart] = useState(false)
 
-  console.log(searchBarOpen)
-  console.log(searchQuery)
-
   // Removes "Home"
   links = links?.filter((link) => link.name != 'Home')
 
@@ -74,7 +71,6 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
   const updateJson = async () => {
     const response = await fetch('/api/optionsbycategory/')
     const result = await response.json()
-    console.log(result)
   }
 
   return (

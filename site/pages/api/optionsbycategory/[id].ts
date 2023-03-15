@@ -27,6 +27,7 @@ export default async function handler(
             })
           }
           res.status(400).json({ success: false, data: 'Category not found' })
+          return
         }
         res
           .status(400)
