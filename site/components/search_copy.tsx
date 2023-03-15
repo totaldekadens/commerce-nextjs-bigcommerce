@@ -48,7 +48,6 @@ import {
 import { sortOptions } from '@lib/data/navigation'
 import Breadcrumbs from './common/Breadcrumbs/Breadcrumbs'
 import { getEnglishColor } from '@lib/colors'
-import { normalizeProduct } from '@lib/normalize'
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
@@ -70,14 +69,14 @@ interface Filter {
   option_values: FilterValue[]
 }
 
-export const convertProductResponse = (array: any, translation?: any) => {
+/* export const convertProductResponse = (array: any, translation?: any) => {
   if (Array.isArray(array)) {
     return array.map((productEdge: any) => {
       let product = productEdge.node
-      //if (product?.__typename === 'Product') {
-      /*if (locale && config.applyLocale) {
+      if (product?.__typename === 'Product') {
+      if (locale && config.applyLocale) {
                 setProductLocaleMeta(product)
-            }*/
+            }
       product = normalizeProduct(product as any)
       // Sort and bundle custom fields with the same name (optional)
       const sku = product.sku ? product.sku : ''
@@ -90,7 +89,7 @@ export const convertProductResponse = (array: any, translation?: any) => {
   }
   return
 }
-
+ */
 export default function SearchCopy({
   categories,
   brands,
