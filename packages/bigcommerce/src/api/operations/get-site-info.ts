@@ -83,7 +83,7 @@ export default function getSiteInfoOperation({
     const { data } = await cfg.fetch<GetSiteInfoQuery>(query)
     const categoryTree = data.site.categoryTree
     const categories = null //data.site.categoryTree.map(normalizeCategory)
-    console.log(data)
+    //console.log(data)
     const brands = data.site?.brands?.edges
 
     return {

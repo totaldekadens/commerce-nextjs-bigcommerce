@@ -17,7 +17,7 @@ export async function getStaticProps({
   locale,
   locales,
 }: GetStaticPropsContext<{ pages: string[] }>) {
-  console.log(params)
+  //console.log(params)
   const config = { locale, locales }
   const pagesPromise = commerce.getAllPages({ config, preview })
   const siteInfoPromise = commerce.getSiteInfo({ config, preview })
@@ -36,7 +36,7 @@ export async function getStaticProps({
       preview,
     }))
 
-  console.log('Kommer jag hit?')
+  // console.log('Kommer jag hit?')
   const page = data?.page
 
   if (!page) {
@@ -65,7 +65,7 @@ export async function getStaticPaths({ locales }: GetStaticPathsContext) {
       invalidPaths.push(url)
     })
   log()
-  console.log(paths)
+  //console.log(paths)
   return {
     paths,
     fallback: 'blocking',
@@ -80,9 +80,9 @@ export default function Pages({
   categoryTree: any
 }) {
   const router = useRouter()
-  console.log('page:' + page)
-  console.log(categoryTree)
-  console.log('...pages')
+  // console.log('page:' + page)
+  // console.log(categoryTree)
+  // console.log('...pages')
   return router.isFallback ? (
     <h1>Loading...</h1> // TODO (BC) Add Skeleton Views
   ) : (

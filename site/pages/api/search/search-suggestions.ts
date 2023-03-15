@@ -15,7 +15,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   axios
     .request(options)
     .then(function (response) {
-      console.log(response.data.result)
+      //console.log(response.data.result)
       res.json(response.data.result)
     })
     .catch(function (error) {
