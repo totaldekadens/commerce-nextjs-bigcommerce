@@ -4,7 +4,7 @@ import jagarlivApolloClient from './apollo/apollo'
 import { getCategoryTreeQuery } from './queries'
 import { normalizeCategoryTree } from './normalize'
 
-export const getActiveCategoryV2 = (
+/* export const getActiveCategoryV2 = (
   categoryTree: any,
   category: string | undefined
 ) => {
@@ -51,7 +51,7 @@ export const getActiveCategoryV2 = (
     }
   }
   return activeCategory
-}
+} */
 
 export async function getSearchStaticProps({
   preview,
@@ -68,6 +68,55 @@ export async function getSearchStaticProps({
     query: getCategoryTreeQuery,
   })
   const hej = normalizeCategoryTree(data.site.categoryTree)
+
+  const getActiveCategoryV2 = (
+    categoryTree: any,
+    category: string | undefined
+  ) => {
+    let activeCategory: any = {}
+
+    category = '/' + category + '/'
+    for (let i = 0; i < categoryTree.length; i++) {
+      if (categoryTree[i].path == category) {
+        activeCategory = categoryTree[i]
+        return activeCategory
+      }
+      for (let ii = 0; ii < categoryTree[i].children.length; ii++) {
+        const yay = categoryTree[i].children[ii].path
+        if (yay == category) {
+          activeCategory = categoryTree[i].children[ii]
+          return activeCategory
+        }
+        for (
+          let iii = 0;
+          iii < categoryTree[i].children[ii].children.length;
+          iii++
+        ) {
+          const yay2 = categoryTree[i].children[ii].children[iii].path
+
+          if (yay2 == category) {
+            activeCategory = categoryTree[i].children[ii].children[iii]
+            return activeCategory
+          }
+          for (
+            let iiii = 0;
+            iiii < categoryTree[i].children[ii].children[iii].children.length;
+            iiii++
+          ) {
+            const yay3 =
+              categoryTree[i].children[ii].children[iii].children[iiii].path
+
+            if (yay3 == category) {
+              activeCategory =
+                categoryTree[i].children[ii].children[iii].children[iiii]
+              return activeCategory
+            }
+          }
+        }
+      }
+    }
+    return activeCategory
+  }
 
   /* Gets fullpath (should be an easier way, check), finds cateboryID by path and finds category with options by Id */
   let fullpath: any = ''
