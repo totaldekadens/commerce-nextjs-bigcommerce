@@ -2,7 +2,12 @@ import { FC, useRef } from 'react'
 import { Searchbar, UserNav } from '@components/common'
 import { Fragment, useState } from 'react'
 import { Dialog, Popover, Tab, Transition } from '@headlessui/react'
-import { Bars3Icon, UserIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import {
+  Bars3Icon,
+  MagnifyingGlassIcon,
+  UserIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline'
 //import { navigation } from '../../utils/data/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -14,6 +19,7 @@ import { navigation } from '@lib/data/navigation'
 import UserNavCopy from '../UserNav/UserNav_Copy'
 import getSlug from '@lib/get-slug'
 import { IconUser } from '@tabler/icons-react'
+import SearchBar from '@components/searchbar/SearchBar'
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
 }
@@ -34,10 +40,15 @@ interface NavbarProps {
 
 const NavbarCopy: FC<NavbarProps> = ({ links }) => {
   const [open, setOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchBarOpen, setSearchBar] = useState(false)
   const [USPheight, setUSPHeight] = useState(40)
   const { hide, hideUSP, scrollY } = useContext<any>(hideContext)
   const { width, height } = useWindowSize()
   const [openCart, setOpenCart] = useState(false)
+
+  console.log(searchBarOpen)
+  console.log(searchQuery)
 
   // Removes "Home"
   links = links?.filter((link) => link.name != 'Home')
@@ -47,6 +58,12 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
       setUSPHeight(40 - scrollY)
     }
   }, [scrollY])
+
+  useEffect(() => {
+    if (searchQuery.length > 0) {
+      setSearchBar(true)
+    }
+  }, [searchQuery])
 
   const list = [
     { id: 239, children: [90, 105, 170] }, // Fritid
@@ -701,11 +718,41 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
 
                     {/* Search */}
                     <div className="flex lg:ml-6">
-                      {process.env.COMMERCE_SEARCH_ENABLED && (
+                      <div className="flex hidden lg:flex lg:flex-1 lg:ml-6">
+                        <div className="relative mt-1 rounded-md shadow-sm flex-col">
+                          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 hidden md:flex">
+                            <MagnifyingGlassIcon
+                              className="h-6 w-6"
+                              aria-hidden="true"
+                            />{' '}
+                          </div>
+                          <input
+                            value={searchQuery}
+                            autoComplete="off"
+                            onChange={(e) => {
+                              setSearchQuery(e.target.value)
+                            }}
+                            type="text"
+                            name="search"
+                            id="email"
+                            className="block w-full rounded-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                            placeholder="Search..."
+                          />
+                        </div>
+                      </div>
+                      {searchBarOpen ? (
+                        <SearchBar
+                          searchBarOpen={searchBarOpen}
+                          setSearchBar={setSearchBar}
+                          setSearchQuery={setSearchQuery}
+                          searchQuery={searchQuery}
+                        />
+                      ) : null}
+                      {/*   {process.env.COMMERCE_SEARCH_ENABLED && (
                         <div className="justify-center flex-1 hidden lg:flex">
                           <Searchbar />
                         </div>
-                      )}
+                      )} */}
 
                       {/*  {process.env.COMMERCE_SEARCH_ENABLED && (
                         <div className="flex pb-4 lg:px-6 lg:hidden">
@@ -725,7 +772,12 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                     </div>
 
                     {/* Cart */}
-                    <div className="ml-4 flow-root lg:ml-6">
+                    <div className="ml-4 flow-root flex lg:ml-6">
+                      {/*   <MagnifyingGlassIcon
+                        onClick={() => setSearchBar(true)}
+                        className="h-6 w-6 lg:hidden flex-shrink-0 text-gray-700 cursor-pointer hover:text-gray-800"
+                        aria-hidden="true"
+                      /> */}
                       {/* <div
                         className="group -m-2 flex items-center p-2"
                         style={{ cursor: 'pointer' }}
@@ -740,7 +792,7 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
                         </span>
                         <span className="sr-only">items in cart, view bag</span>
                       </div> */}
-                      <UserNavCopy />
+                      <UserNavCopy setSearchBar={setSearchBar} />
                     </div>
                   </div>
                 </div>

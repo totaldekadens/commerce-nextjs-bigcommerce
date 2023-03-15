@@ -53,7 +53,7 @@ export default function ShopByCategory() {
             <div className="flex items-end p-6 sm:absolute sm:inset-0">
               <div>
                 <h3 className="font-semibold text-white">
-                  <Link href="/search/fritid/fritidsskor/friluftskangor-vandringskangor">
+                  <Link href="/search/fritid/fritidsklader-och-utrustning/fritidsskor/friluftskangor-vandringskangor">
                     <span className="absolute inset-0" />
                     Kängor
                   </Link>

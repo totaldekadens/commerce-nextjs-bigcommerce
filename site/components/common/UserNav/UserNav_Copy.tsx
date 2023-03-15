@@ -13,14 +13,18 @@ import {
   DropdownTrigger as DropdownTriggerInst,
   Button,
 } from '@components/ui'
-import { ShoppingBagIcon } from '@heroicons/react/24/outline'
+import {
+  MagnifyingGlassIcon,
+  ShoppingBagIcon,
+} from '@heroicons/react/24/outline'
 import type { LineItem } from '@commerce/types/cart'
 
 const countItem = (count: number, item: LineItem) => count + item.quantity
 
 const UserNavCopy: React.FC<{
+  setSearchBar: any
   className?: string
-}> = ({ className }) => {
+}> = ({ setSearchBar, className }) => {
   const { data } = useCart()
   const { data: isCustomerLoggedIn } = useCustomer()
   const { closeSidebarIfPresent, openModal, setSidebarView, openSidebar } =
@@ -34,29 +38,35 @@ const UserNavCopy: React.FC<{
   return (
     <nav className={cn(s.root, className)}>
       <ul className={s.list}>
-        {process.env.COMMERCE_CART_ENABLED && (
-          <li className={s.item}>
-            <Button
-              className={s.item}
-              variant="naked"
-              onClick={() => {
-                setSidebarView('CART_VIEW')
-                openSidebar()
-              }}
-              aria-label={`Cart items: ${itemsCount}`}
-            >
-              <ShoppingBagIcon
-                className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
-                aria-hidden="true"
-              />
-              {itemsCount > 0 && (
-                <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-                  {itemsCount}
-                </span>
-              )}
-            </Button>
-          </li>
-        )}
+        <li>
+          <MagnifyingGlassIcon
+            onClick={() => setSearchBar(true)}
+            className="h-6 w-6 lg:hidden flex-shrink-0 text-gray-700 cursor-pointer hover:text-gray-800"
+            aria-hidden="true"
+          />
+        </li>
+        <li className={s.item}>
+          <Button
+            className={s.item}
+            variant="naked"
+            onClick={() => {
+              setSidebarView('CART_VIEW')
+              openSidebar()
+            }}
+            aria-label={`Cart items: ${itemsCount}`}
+          >
+            <ShoppingBagIcon
+              className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+              aria-hidden="true"
+            />
+            {itemsCount > 0 && (
+              <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
+                {itemsCount}
+              </span>
+            )}
+          </Button>
+        </li>
+
         {/* {process.env.COMMERCE_WISHLIST_ENABLED && (
           <li className={s.item}>
             <Link href="/wishlist">
