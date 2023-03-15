@@ -10,8 +10,14 @@ import ShopByCategory from '@components/common/ShopByCategory'
 import Marketing from '@components/common/Marketing'
 import OurMind from '@components/common/OurMind'
 import jagarlivApolloClient from '@lib/apollo/apollo'
-import { getCategoryTreeQuery } from '@lib/queries'
+import {
+  getAllProducts,
+  getCategoryTreeQuery,
+  searchByOptionValue,
+} from '@lib/queries'
 import { normalizeCategoryTree } from '@lib/normalize'
+import { json } from 'stream/consumers'
+//import listan from '../lib/data.json'
 
 export async function getStaticProps({
   preview,
@@ -20,13 +26,15 @@ export async function getStaticProps({
 }: GetStaticPropsContext) {
   const config = { locale, locales }
   const productsPromise = commerce.getAllProducts({
-    variables: { first: 6 },
+    variables: {
+      /* first: 6 */
+    },
     config,
     preview,
     // Saleor provider only
     ...({ featured: true } as any),
   })
-  //console.log(preview)
+
   const pagesPromise = commerce.getAllPages({ config, preview })
   const siteInfoPromise = commerce.getSiteInfo({ config, preview })
   const { products } = await productsPromise
@@ -36,11 +44,39 @@ export async function getStaticProps({
   const { data } = await jagarlivApolloClient.query({
     query: getCategoryTreeQuery,
   })
-  console.log(data)
+  // Limit on 50 products?
+  /*   const tjona = await jagarlivApolloClient.query({
+    query: searchByOptionValue,
+    variables: { searchStrings: ['Blå'], displayName: 'Färg', categoryId: 113 },
+  }) */
+
+  const body = {
+    categoryId: 113,
+    displayName: 'Färg',
+    searchStrings: ['Blå'],
+  }
+
+  const request = {
+    method: 'POST',
+    Headers: {
+      Accept: 'application.json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  }
+
+  let response = await fetch(
+    'http://localhost:3000/api/productsbyoptionsandcategory/',
+    request
+  )
+
+  let result = await response.json()
+
   const hej = normalizeCategoryTree(data.site.categoryTree)
 
   return {
     props: {
+      allProducts: JSON.parse(JSON.stringify(result)),
       categoryTree: hej,
       products,
       categories,
@@ -54,14 +90,12 @@ export async function getStaticProps({
 export default function Home({
   categoryTree,
   products,
+  allProducts,
   categories,
   pages,
   brands,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  //console.log('index')
-  //console.log(categoryTree)
-  //console.log(categories)
-  //console.log(categoryTree)
+  console.log(allProducts)
 
   // Gets 4 first products in list. Will be replaced by products from Clerk?
   const trendingProducts = products.slice(0, 4).map((product) => product)

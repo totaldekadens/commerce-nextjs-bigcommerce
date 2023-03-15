@@ -6,7 +6,7 @@ interface Props {
 }
 
 export function ProductCard({ products, setOpenCart }: Props) {
-  console.log(products)
+  //console.log(products)
   //console.log(products)
   return (
     <>

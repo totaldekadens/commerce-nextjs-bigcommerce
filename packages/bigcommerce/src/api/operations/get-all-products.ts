@@ -19,7 +19,7 @@ export const getAllProductsQuery = /* GraphQL */ `
     $hasLocale: Boolean = false
     $locale: String = "null"
     $entityIds: [Int!]
-    $first: Int = 10
+    $first: Int = 1000
     $products: Boolean = false
     $featuredProducts: Boolean = false
     $bestSellingProducts: Boolean = false

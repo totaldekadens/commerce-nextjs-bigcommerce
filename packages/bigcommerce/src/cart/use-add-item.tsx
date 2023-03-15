@@ -13,6 +13,7 @@ export const handler: MutationHook<AddItemHook> = {
     method: 'POST',
   },
   async fetcher({ input: item, options, fetch }) {
+    // Om kvantitet finns, är större än noll och är ett nummer
     if (
       item.quantity &&
       (!Number.isInteger(item.quantity) || item.quantity! < 1)

@@ -23,7 +23,7 @@ const Hero: FC = () => {
           NEW IN
         </h2>
         <p className="mt-3 text-6xl text-white">Lorem ipsum & Lorem ipsum</p>
-        <Link href="/search/fritid/utrustning">
+        <Link href="/search/fritid/fritidsklader-och-utrustning/">
           <div className="mt-8 block w-full rounded-2xl border border-transparent bg-white py-3 px-8 text-base font-medium text-gray-900 hover:bg-gray-100 sm:w-auto">
             SHOP NOW
           </div>

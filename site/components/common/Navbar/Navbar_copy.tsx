@@ -54,19 +54,33 @@ const NavbarCopy: FC<NavbarProps> = ({ links }) => {
     { id: 240, children: [169, 167] }, // Fiske
   ]
 
-  //const getFixedLinks = links?.map()
-  //console.log(links)
+  const updateJson = async () => {
+    const response = await fetch('/api/optionsbycategory/')
+    const result = await response.json()
+    console.log(result)
+  }
 
   return (
     <>
-      <p
-        className={`flex items-center justify-center bg-neutral-500 px-4 text-sm font-medium text-white sm:px-6 lg:px-8`}
-        style={{
-          height: 40,
-        }}
-      >
-        Get free delivery on orders over $100
-      </p>
+      <div>
+        <p
+          className={`flex items-center justify-center bg-neutral-500 px-4 text-sm font-medium text-white sm:px-6 lg:px-8`}
+          style={{
+            height: 40,
+          }}
+        >
+          Get free delivery on orders over $100
+        </p>
+        <div
+          className="absolute top-0 right-0 cursor-pointer z-50 text-neutral-500 hover:text-black"
+          onClick={() => {
+            updateJson()
+          }}
+        >
+          uppdatera
+        </div>
+      </div>
+
       <div className="bg-white">
         {/* Mobile menu */}
         <Transition.Root show={open} as={Fragment}>

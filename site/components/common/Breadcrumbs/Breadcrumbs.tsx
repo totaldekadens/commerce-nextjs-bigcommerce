@@ -7,7 +7,7 @@ interface Props {
 }
 
 const Breadcrumbs: FC<Props> = ({ list }) => {
-  console.log(list)
+  //console.log(list)
   return (
     <nav className="flex" aria-label="Breadcrumb">
       <ol role="list" className="flex items-center space-x-4">

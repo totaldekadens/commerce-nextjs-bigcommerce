@@ -48,6 +48,7 @@ import {
 import { sortOptions } from '@lib/data/navigation'
 import Breadcrumbs from './common/Breadcrumbs/Breadcrumbs'
 import { getEnglishColor } from '@lib/colors'
+import { normalizeProduct } from '@lib/normalize'
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
@@ -59,22 +60,48 @@ interface Value {
 }
 
 interface FilterValue {
-  value: string
+  label: string
   checked: boolean
+  sort_order?: number
 }
 
 interface Filter {
-  name: string
-  values: FilterValue[]
+  display_name: string
+  option_values: FilterValue[]
+}
+
+export const convertProductResponse = (array: any, translation?: any) => {
+  if (Array.isArray(array)) {
+    return array.map((productEdge: any) => {
+      let product = productEdge.node
+      //if (product?.__typename === 'Product') {
+      /*if (locale && config.applyLocale) {
+                setProductLocaleMeta(product)
+            }*/
+      product = normalizeProduct(product as any)
+      // Sort and bundle custom fields with the same name (optional)
+      const sku = product.sku ? product.sku : ''
+      if (translation[sku]) product.translate = translation[sku]
+      product.translate.en.name = product.name
+      product.translate.en.description = product.description
+      return product
+      //}
+    })
+  }
+  return
 }
 
 export default function SearchCopy({
   categories,
   brands,
   categoryTree,
+  categoryOptions,
+  currentCategory,
 }: SearchPropsType) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
-  const [filters, setFilters] = useState<Filter[]>([])
+  const [filters, setFilters] = useState<Filter[]>(
+    /* categoryOptions.options */ []
+  )
   const [values, setValues] = useState<Value[]>([])
   const router = useRouter()
   const { asPath, locale } = router
@@ -83,9 +110,10 @@ export default function SearchCopy({
   // in the same way of products, it's better to ignore the search input if one
   // of those is selected
   const query = filterQuery({ sort })
-  console.log(categoryTree)
+  //console.log(categoryOptions)
+  //console.log(currentCategory)
   const { pathname, category, brand } = useSearchMeta(asPath)
-
+  //console.log(categoryTree)
   // Gets the last slug in path
   let getLength = router.query.category?.length
 
@@ -94,37 +122,84 @@ export default function SearchCopy({
     : undefined
 
   // Gets active category
-  const activeCategory = getActiveCategory(categoryTree, activeCategorySlug)
+  // const activeCategory = getActiveCategory(categoryTree, activeCategorySlug)
 
   // Gets all sub categories
-  const activeCategoryTree = getActiveCategoryTree(
+  /*   const activeCategoryTree = getActiveCategoryTree(
     categoryTree,
     activeCategorySlug
-  )
-  console.log(activeCategorySlug)
-  console.log(activeCategoryTree)
+  ) */
+
   const activeBrand = brands.find((b: Brand) => b.slug === brand)
 
   const { data, error } = useSearch({
     search: typeof q === 'string' ? q : '',
-    categoryId: activeCategory?.entityId,
+    categoryId: currentCategory?.entityId,
     brandId: activeBrand?.id,
     sort: typeof sort === 'string' ? sort : '',
     locale,
   })
-  console.log(activeCategory)
+
   const [ActiveProducts, setActiveProducts] = useState<Product[]>(
     data ? data.products : []
   )
+  console.log(data)
+  // TEST på new på denna!
+  /*   useEffect(() => {
+    const updateProducts = async () => {
+      let allValues: any[] = []
+      filters.forEach((option) => {
+        return option.option_values.forEach((value) => {
+          if (value.checked) {
+            allValues.push({ name: option.display_name, value: value.label })
+          }
+        })
+      })
+      //console.log(allValues)
+      const currentProducts: Product[] = []
+      const currentProducts2: Product[] = []
+      for (let i = 0; i < allValues.length; i++) {
+        let value = allValues[i]
+        //console.log(value)
+        const body = {
+          categoryId: currentCategory?.entityId,
+          displayName: value.name,
+          searchStrings: [value.value],
+        }
+
+        const request = {
+          method: 'POST',
+          Headers: {
+            Accept: 'application.json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body),
+        }
+
+        let response = await fetch(
+          'http://localhost:3000/api/productsbyoptionsandcategory/',
+          request
+        )
+
+        let result = await response.json()
+        console.log(result)
+        let newResult = convertProductResponse(
+          result.data.data.site.search.searchProducts.products.edges
+        )
+        console.log(newResult)
+      }
+    }
+    updateProducts()
+  }, [data, filters, currentCategory]) */
+
   // Updates Productlist with filtered products based on whats checked
   useEffect(() => {
     let allValues: Value[] = []
     if (data && data.found) {
-      // Creates a list of strings with checked options/values
       filters.forEach((option) => {
-        return option.values.forEach((value) => {
+        return option.option_values.forEach((value) => {
           if (value.checked) {
-            allValues.push({ name: option.name, value: value.value })
+            allValues.push({ name: option.display_name, value: value.label })
           }
         })
       })
@@ -166,27 +241,20 @@ export default function SearchCopy({
   const splittedPaths = asPath.split('/')
   // Gets the category tree of the last slug. Todo: Need to filter out category tree on the first slug to avoid get duplicated pathnames from another category branch
   const categoryObjectsFromPath = splittedPaths.map((path) => {
-    //console.log(path)
     return getActiveCategoryTree(categoryTree, path)
   })
-  //console.log(categoryObjectsFromPath)
+
   // Filter out empty objects in array
   const newArray = categoryObjectsFromPath.filter(
     (value) => Object.keys(value).length !== 0
   )
-  console.log(newArray)
+
   // Adds the rigth paths to all categories in the url
   const list: any[] = []
   newArray.forEach((category) => {
     const foundIndex = splittedPaths.findIndex(
       (path) => path == getSlug(category.path)
     )
-    console.log(category)
-    // Creates full path to category in category tree and pushes it to a list
-    //const newPaths = splittedPaths.slice(0, foundIndex + 1)
-    //const copy = { ...category }
-    //copy.path = newPaths.join('/')
-    //category = copy
     list.push(category)
   })
 
@@ -200,22 +268,22 @@ export default function SearchCopy({
       getData.forEach((product) => {
         return product.options.map((option) => {
           const findDisplayName = names.find(
-            (item) => item.name == option.displayName
+            (item) => item.display_name == option.displayName
           )
           if (!findDisplayName) {
-            names.push({ name: option.displayName, values: [] })
+            names.push({ display_name: option.displayName, option_values: [] })
           }
           option.values.forEach((value) => {
             const findDisplayName: Filter | Filter[] | undefined = names.find(
-              (item) => item.name == option.displayName
+              (item) => item.display_name == option.displayName
             )
             if (findDisplayName) {
-              const findValue = findDisplayName.values.find(
-                (hej) => hej.value == value.label
+              const findValue = findDisplayName.option_values.find(
+                (hej) => hej.label == value.label
               )
               if (!findValue) {
-                findDisplayName.values.push({
-                  value: value.label,
+                findDisplayName.option_values.push({
+                  label: value.label,
                   checked: false,
                 })
               }
@@ -226,11 +294,23 @@ export default function SearchCopy({
       setFilters(names)
     }
   }, [data])
-
+  console.log(filters)
   if (error) {
     return <ErrorMessage error={error} />
   }
 
+  /* 
+  
+  Du skall kunna hämta alla tillgängliga options för varje kategori 
+
+  Kategori och options/values
+
+  
+  
+  */
+
+  //console.log(filters)
+  //console.log(data ? data.products : null)
   /*   const handleClick = (event: any, filter: string) => {
     if (filter !== activeFilter) {
       setToggleFilter(true)
@@ -239,7 +319,7 @@ export default function SearchCopy({
     }
     setActiveFilter(filter)
   } */
-  console.log(list)
+  //console.log(list)
   return (
     <div className="bg-white">
       <div>
@@ -295,11 +375,11 @@ export default function SearchCopy({
                       role="list"
                       className="px-2 py-3 font-medium text-gray-900"
                     >
-                      {!activeCategoryTree.children ||
-                      activeCategoryTree.children < 1 ? (
+                      {!currentCategory.children ||
+                      currentCategory.children < 1 ? (
                         <span>Inga underkategorier tillgängliga</span>
                       ) : (
-                        activeCategoryTree.children.map((category: any) => (
+                        currentCategory.children.map((category: any) => (
                           <li
                             key={category.name}
                             onClick={() => setMobileFiltersOpen(false)}
@@ -317,7 +397,7 @@ export default function SearchCopy({
                     {filters.map((section) => (
                       <Disclosure
                         as="div"
-                        key={section.name}
+                        key={section.display_name}
                         className="border-t border-gray-200 px-4 py-6"
                       >
                         {({ open }) => (
@@ -325,7 +405,7 @@ export default function SearchCopy({
                             <h3 className="-mx-2 -my-3 flow-root">
                               <Disclosure.Button className="flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
                                 <span className="font-medium text-gray-900">
-                                  {section.name}
+                                  {section.display_name}
                                 </span>
                                 <span className="ml-6 flex items-center">
                                   {open ? (
@@ -344,16 +424,16 @@ export default function SearchCopy({
                             </h3>
                             <Disclosure.Panel className="pt-6">
                               <div className="space-y-6">
-                                {section.values.map(
+                                {section.option_values.map(
                                   (option, optionIdx: number) => (
                                     <div
-                                      key={option.value}
+                                      key={option.label}
                                       className="flex items-center"
                                     >
                                       <input
-                                        id={`filter-mobile-${section.name}-${optionIdx}`}
-                                        name={`${section.name}[]`}
-                                        defaultValue={option.value}
+                                        id={`filter-mobile-${section.display_name}-${optionIdx}`}
+                                        name={`${section.display_name}[]`}
+                                        defaultValue={option.label}
                                         type="checkbox"
                                         defaultChecked={option.checked}
                                         className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
@@ -361,15 +441,20 @@ export default function SearchCopy({
                                           const copyFilters = [...filters]
                                           const updateFilter = copyFilters.map(
                                             (filter) => {
-                                              if (filter.name == section.name) {
-                                                filter.values.forEach((hej) => {
-                                                  if (
-                                                    hej.value == option.value
-                                                  ) {
-                                                    hej.checked = !hej.checked
-                                                    return filter
+                                              if (
+                                                filter.display_name ==
+                                                section.display_name
+                                              ) {
+                                                filter.option_values.forEach(
+                                                  (hej) => {
+                                                    if (
+                                                      hej.label == option.label
+                                                    ) {
+                                                      hej.checked = !hej.checked
+                                                      return filter
+                                                    }
                                                   }
-                                                })
+                                                )
                                               }
                                               return filter
                                             }
@@ -378,10 +463,10 @@ export default function SearchCopy({
                                         }}
                                       />
                                       <label
-                                        htmlFor={`filter-mobile-${section.name}-${optionIdx}`}
+                                        htmlFor={`filter-mobile-${section.display_name}-${optionIdx}`}
                                         className="ml-3 min-w-0 flex-1 text-gray-500"
                                       >
-                                        {option.value}
+                                        {option.label}
                                       </label>
                                     </div>
                                   )
@@ -404,7 +489,7 @@ export default function SearchCopy({
             <div>
               <Breadcrumbs list={list} />
               <h1 className="text-4xl font-bold tracking-tight text-gray-900 pt-4">
-                {activeCategory?.name}
+                {currentCategory?.name}
               </h1>
             </div>
             <div className="flex items-center">
@@ -483,34 +568,32 @@ export default function SearchCopy({
                 <ul
                   role="list"
                   className={
-                    !activeCategoryTree.children
+                    !currentCategory.children
                       ? 'space-y-4 pb-6 text-sm font-medium text-gray-900'
                       : 'space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900'
                   }
                 >
-                  {!activeCategoryTree.children ||
-                  activeCategoryTree.children.length < 1 ? (
+                  {!currentCategory.children ||
+                  currentCategory.children.length < 1 ? (
                     <span className="font-thin text-xs">
                       Inga underkategorier tillgängliga
                     </span>
                   ) : (
-                    activeCategoryTree.children.map(
-                      (category: any, i: number) => (
-                        <div key={i}>
-                          {category.children &&
-                          category.productCount < 1 &&
-                          category.children.length <
-                            1 ? null : !category.children &&
-                            category.productCount < 1 ? null : (
-                            <li key={category.name}>
-                              <Link href={'/search' + category.path}>
-                                {category.name}
-                              </Link>
-                            </li>
-                          )}
-                        </div>
-                      )
-                    )
+                    currentCategory.children.map((category: any, i: number) => (
+                      <div key={i}>
+                        {category.children &&
+                        category.productCount < 1 &&
+                        category.children.length <
+                          1 ? null : !category.children &&
+                          category.productCount < 1 ? null : (
+                          <li key={category.name}>
+                            <Link href={'/search' + category.path}>
+                              {category.name}
+                            </Link>
+                          </li>
+                        )}
+                      </div>
+                    ))
                   )}
                 </ul>
 
@@ -522,7 +605,7 @@ export default function SearchCopy({
                   filters.map((section) => (
                     <Disclosure
                       as="div"
-                      key={section.name}
+                      key={section.display_name}
                       className="border-b border-gray-200 py-6"
                     >
                       {({ open }) => (
@@ -530,7 +613,7 @@ export default function SearchCopy({
                           <h3 className="-my-3 flow-root">
                             <Disclosure.Button className="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
                               <span className="font-medium text-gray-900">
-                                {section.name}
+                                {section.display_name}
                               </span>
                               <span className="ml-6 flex items-center">
                                 {open ? (
@@ -549,16 +632,16 @@ export default function SearchCopy({
                           </h3>
                           <Disclosure.Panel className="pt-6">
                             <div className="space-y-4">
-                              {section.values.map(
+                              {section.option_values.map(
                                 (option, optionIdx: number) => (
                                   <div
-                                    key={option.value}
+                                    key={option.label}
                                     className="flex items-center"
                                   >
                                     <input
-                                      id={`filter-${section.name}-${optionIdx}`}
-                                      name={`${section.name}[]`}
-                                      defaultValue={option.value}
+                                      id={`filter-${section.display_name}-${optionIdx}`}
+                                      name={`${section.display_name}[]`}
+                                      defaultValue={option.label}
                                       type="checkbox"
                                       defaultChecked={option.checked}
                                       className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
@@ -566,13 +649,20 @@ export default function SearchCopy({
                                         const copyFilters = [...filters]
                                         const updateFilter = copyFilters.map(
                                           (filter) => {
-                                            if (filter.name == section.name) {
-                                              filter.values.forEach((hej) => {
-                                                if (hej.value == option.value) {
-                                                  hej.checked = !hej.checked
-                                                  return filter
+                                            if (
+                                              filter.display_name ==
+                                              section.display_name
+                                            ) {
+                                              filter.option_values.forEach(
+                                                (hej) => {
+                                                  if (
+                                                    hej.label == option.label
+                                                  ) {
+                                                    hej.checked = !hej.checked
+                                                    return filter
+                                                  }
                                                 }
-                                              })
+                                              )
                                             }
                                             return filter
                                           }
@@ -581,10 +671,10 @@ export default function SearchCopy({
                                       }}
                                     />
                                     <label
-                                      htmlFor={`filter-${section.name}-${optionIdx}`}
+                                      htmlFor={`filter-${section.display_name}-${optionIdx}`}
                                       className="ml-3 text-sm text-gray-600"
                                     >
-                                      {option.value}
+                                      {option.label}
                                     </label>
                                   </div>
                                 )
