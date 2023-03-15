@@ -95,8 +95,8 @@ export default function SearchCopy({
   brands,
   categoryTree,
   categoryOptions,
-  currentCategory,
-}: SearchPropsType) {
+}: //currentCategory,
+SearchPropsType) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [filters, setFilters] = useState<Filter[]>(
     /* categoryOptions.options */ []
@@ -121,19 +121,19 @@ export default function SearchCopy({
     : undefined
 
   // Gets active category
-  // const activeCategory = getActiveCategory(categoryTree, activeCategorySlug)
+  const activeCategory = getActiveCategory(categoryTree, activeCategorySlug)
 
   // Gets all sub categories
-  /*   const activeCategoryTree = getActiveCategoryTree(
+  const activeCategoryTree = getActiveCategoryTree(
     categoryTree,
     activeCategorySlug
-  ) */
+  )
 
   const activeBrand = brands.find((b: Brand) => b.slug === brand)
 
   const { data, error } = useSearch({
     search: typeof q === 'string' ? q : '',
-    categoryId: currentCategory?.entityId,
+    categoryId: activeCategory?.entityId,
     brandId: activeBrand?.id,
     sort: typeof sort === 'string' ? sort : '',
     locale,
@@ -374,11 +374,11 @@ export default function SearchCopy({
                       role="list"
                       className="px-2 py-3 font-medium text-gray-900"
                     >
-                      {!currentCategory.children ||
-                      currentCategory.children < 1 ? (
+                      {!activeCategoryTree.children ||
+                      activeCategoryTree.children < 1 ? (
                         <span>Inga underkategorier tillgängliga</span>
                       ) : (
-                        currentCategory.children.map((category: any) => (
+                        activeCategoryTree.children.map((category: any) => (
                           <li
                             key={category.name}
                             onClick={() => setMobileFiltersOpen(false)}
@@ -488,7 +488,7 @@ export default function SearchCopy({
             <div>
               <Breadcrumbs list={list} />
               <h1 className="text-4xl font-bold tracking-tight text-gray-900 pt-4">
-                {currentCategory?.name}
+                {activeCategoryTree?.name}
               </h1>
             </div>
             <div className="flex items-center">
@@ -567,32 +567,34 @@ export default function SearchCopy({
                 <ul
                   role="list"
                   className={
-                    !currentCategory.children
+                    !activeCategoryTree.children
                       ? 'space-y-4 pb-6 text-sm font-medium text-gray-900'
                       : 'space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900'
                   }
                 >
-                  {!currentCategory.children ||
-                  currentCategory.children.length < 1 ? (
+                  {!activeCategoryTree.children ||
+                  activeCategoryTree.children.length < 1 ? (
                     <span className="font-thin text-xs">
                       Inga underkategorier tillgängliga
                     </span>
                   ) : (
-                    currentCategory.children.map((category: any, i: number) => (
-                      <div key={i}>
-                        {category.children &&
-                        category.productCount < 1 &&
-                        category.children.length <
-                          1 ? null : !category.children &&
-                          category.productCount < 1 ? null : (
-                          <li key={category.name}>
-                            <Link href={'/search' + category.path}>
-                              {category.name}
-                            </Link>
-                          </li>
-                        )}
-                      </div>
-                    ))
+                    activeCategoryTree.children.map(
+                      (category: any, i: number) => (
+                        <div key={i}>
+                          {category.children &&
+                          category.productCount < 1 &&
+                          category.children.length <
+                            1 ? null : !category.children &&
+                            category.productCount < 1 ? null : (
+                            <li key={category.name}>
+                              <Link href={'/search' + category.path}>
+                                {category.name}
+                              </Link>
+                            </li>
+                          )}
+                        </div>
+                      )
+                    )
                   )}
                 </ul>
 

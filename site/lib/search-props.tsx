@@ -92,7 +92,6 @@ export async function getSearchStaticProps({
   }
   let categoryObject = getActiveCategoryV2(hej, fullpath)
 
-  console.log(categoryObject)
   let response = await fetch(
     'http://localhost:3000/api/optionsbycategory/' + categoryObject.entityId
   )
@@ -102,7 +101,7 @@ export async function getSearchStaticProps({
     props: {
       categoryOptions: result.data,
       categoryTree: hej,
-      currentCategory: categoryObject,
+      //currentCategory: categoryObject,
       pages,
       categories, // Denna påverkar navbaren
       brands,
