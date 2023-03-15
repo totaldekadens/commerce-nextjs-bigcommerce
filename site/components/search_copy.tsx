@@ -75,11 +75,12 @@ interface Filter {
   return
 }
  */
+
+// categoryOptions skall in sen
 export default function SearchCopy({
   categories,
   brands,
   categoryTree,
-  categoryOptions,
 }: SearchPropsType) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [filters, setFilters] = useState<Filter[]>(

@@ -69,7 +69,7 @@ export async function getSearchStaticProps({
   })
   const hej = normalizeCategoryTree(data.site.categoryTree)
 
-  const getActiveCategoryV2 = (
+  /*   const getActiveCategoryV2 = (
     categoryTree: any,
     category: string | undefined
   ) => {
@@ -117,9 +117,9 @@ export async function getSearchStaticProps({
     }
     return activeCategory
   }
-
+ */
   /* Gets fullpath (should be an easier way, check), finds cateboryID by path and finds category with options by Id */
-  let fullpath: any = ''
+  /*   let fullpath: any = ''
   if (params && params.category) {
     let path = params.category
     if (typeof path == 'string') {
@@ -134,11 +134,10 @@ export async function getSearchStaticProps({
   let response = await fetch(
     'http://localhost:3000/api/optionsbycategory/' + categoryObject.entityId
   )
-  let result = await response.json()
-
+  let result = await response.json() */
+  ///categoryOptions: result.data,  denna skall in sen i props
   return {
     props: {
-      categoryOptions: result.data,
       categoryTree: hej,
       pages,
       categories, // Denna påverkar navbaren
