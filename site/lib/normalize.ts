@@ -36,7 +36,7 @@ export function normalizeCategoryTree(categories: any) {
   return categories
 }
 
-export function normalizeProduct(productNode: any): Product {
+/* export function normalizeProduct(productNode: any): Product {
   const {
     entityId: id,
     productOptions,
@@ -65,7 +65,7 @@ export function normalizeProduct(productNode: any): Product {
           value: value,
           ...rest,
         })),
-    }, */
+    }, 
     variants: {
       $apply: ({ edges }: any) =>
         edges?.map(({ node: { entityId, productOptions, ...rest } }: any) => ({
@@ -107,4 +107,4 @@ export function normalizeProduct(productNode: any): Product {
       ...rest,
     }
   }
-}
+} */
