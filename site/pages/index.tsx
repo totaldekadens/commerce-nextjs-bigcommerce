@@ -50,33 +50,10 @@ export async function getStaticProps({
     variables: { searchStrings: ['Blå'], displayName: 'Färg', categoryId: 113 },
   }) */
 
-  const body = {
-    categoryId: 113,
-    displayName: 'Färg',
-    searchStrings: ['Blå'],
-  }
-
-  const request = {
-    method: 'POST',
-    Headers: {
-      Accept: 'application.json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-  }
-
-  let response = await fetch(
-    'http://localhost:3000/api/productsbyoptionsandcategory/',
-    request
-  )
-
-  let result = await response.json()
-
   const hej = normalizeCategoryTree(data.site.categoryTree)
 
   return {
     props: {
-      allProducts: JSON.parse(JSON.stringify(result)),
       categoryTree: hej,
       products,
       categories,
@@ -90,13 +67,10 @@ export async function getStaticProps({
 export default function Home({
   categoryTree,
   products,
-  allProducts,
   categories,
   pages,
   brands,
 }: InferGetStaticPropsType<typeof getStaticProps>) {
-  console.log(allProducts)
-
   // Gets 4 first products in list. Will be replaced by products from Clerk?
   const trendingProducts = products.slice(0, 4).map((product) => product)
   //console.log(trendingProducts)

@@ -68,8 +68,8 @@ export function normalizeProduct(
         alt: description || filename,
       })) || [],
     price: {
-      value: price.price,
-      currencyCode: 'SE',
+      value: price.raw,
+      currencyCode: 'USD',
     },
     variants: normalizeVariants(
       commercejsProductVariants,

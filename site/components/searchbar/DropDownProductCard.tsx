@@ -8,7 +8,7 @@ interface Props {
 }
 
 const DropDownProductCard: FC<Props> = ({ product, setSearchBar }) => {
-  console.log(product)
+  // console.log(product)
   product.url.replace('/', '')
   return (
     <Link
