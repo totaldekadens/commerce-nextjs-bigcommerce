@@ -131,7 +131,13 @@ const SearchBar: FC<Props> = ({
                 <div className="bg-white-600 lg:w-5/6 flex  pb-16 flex-wrap">
                   {filteredProducts &&
                     filteredProducts.map((product, i) => {
-                      return <DropDownProductCard key={i} product={product} />
+                      return (
+                        <DropDownProductCard
+                          key={i}
+                          product={product}
+                          setSearchBar={setSearchBar}
+                        />
+                      )
                     })}
                 </div>
               </div>

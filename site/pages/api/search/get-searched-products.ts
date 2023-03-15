@@ -1,4 +1,5 @@
-async function handler(req, res) {
+import { NextApiRequest, NextApiResponse } from 'next'
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   const options = { method: 'GET', headers: { accept: 'application/json' } }
   console.log(req.query.productIds)
 
