@@ -1,15 +1,8 @@
 import type { GetStaticPropsContext, InferGetStaticPropsType } from 'next'
-
 import commerce from '@lib/api/commerce'
 import jagarlivApolloClient from './apollo/apollo'
 import { getCategoryTreeQuery } from './queries'
 import { normalizeCategoryTree } from './normalize'
-import {
-  getActiveCategory,
-  getActiveCategoryTree,
-  getCategoryString,
-} from './hooks/useCategoryHooks'
-import getSlug from './get-slug'
 
 export const getActiveCategoryV2 = (
   categoryTree: any,
@@ -18,9 +11,7 @@ export const getActiveCategoryV2 = (
   let activeCategory: any = {}
 
   category = '/' + category + '/'
-  //console.log(category)
   for (let i = 0; i < categoryTree.length; i++) {
-    //console.log(categoryTree[i].path)
     if (categoryTree[i].path == category) {
       activeCategory = categoryTree[i]
       return activeCategory
@@ -68,7 +59,6 @@ export async function getSearchStaticProps({
   locales,
   params,
 }: GetStaticPropsContext) {
-  //console.log(params)
   const config = { locale, locales }
   const pagesPromise = commerce.getAllPages({ config, preview })
   const siteInfoPromise = commerce.getSiteInfo({ config, preview })
@@ -101,7 +91,6 @@ export async function getSearchStaticProps({
     props: {
       categoryOptions: result.data,
       categoryTree: hej,
-      //currentCategory: categoryObject,
       pages,
       categories, // Denna påverkar navbaren
       brands,

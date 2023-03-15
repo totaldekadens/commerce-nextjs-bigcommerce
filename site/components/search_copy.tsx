@@ -1,18 +1,11 @@
-import cn from 'clsx'
 import type { SearchPropsType } from '@lib/search-props'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-
 import type { Brand } from '@commerce/types/site'
 import type { Product } from '@commerce/types/product'
-
 import { Layout } from '@components/common'
-import { ProductCard } from '@components/product'
-import { Container, Skeleton } from '@components/ui'
-
 import useSearch from '@framework/product/use-search'
-import rangeMap from '@lib/range-map'
 
 const SORT = {
   'trending-desc': 'Trending',
@@ -20,13 +13,7 @@ const SORT = {
   'price-asc': 'Price: Low to high',
   'price-desc': 'Price: High to low',
 }
-
-import {
-  filterQuery,
-  getCategoryPath,
-  getDesignerPath,
-  useSearchMeta,
-} from '@lib/search'
+import { filterQuery, useSearchMeta } from '@lib/search'
 import ErrorMessage from './ui/ErrorMessage'
 import { Fragment } from 'react'
 import { Dialog, Disclosure, Menu, Transition } from '@headlessui/react'
@@ -34,12 +21,10 @@ import { XMarkIcon } from '@heroicons/react/24/outline'
 import {
   ChevronDownIcon,
   FunnelIcon,
-  HomeIcon,
   MinusIcon,
   PlusIcon,
   Squares2X2Icon,
 } from '@heroicons/react/20/solid'
-import Image from 'next/image'
 import getSlug from '@lib/get-slug'
 import {
   getActiveCategory,
@@ -95,8 +80,7 @@ export default function SearchCopy({
   brands,
   categoryTree,
   categoryOptions,
-}: //currentCategory,
-SearchPropsType) {
+}: SearchPropsType) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const [filters, setFilters] = useState<Filter[]>(
     /* categoryOptions.options */ []
@@ -142,7 +126,6 @@ SearchPropsType) {
   const [ActiveProducts, setActiveProducts] = useState<Product[]>(
     data ? data.products : []
   )
-  console.log(data)
   // TEST på new på denna!
   /*   useEffect(() => {
     const updateProducts = async () => {
